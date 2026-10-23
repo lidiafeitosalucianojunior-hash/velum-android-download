@@ -1,0 +1,107 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Login e cadastro • VELUM</title>
+<style>
+:root{--n:#0F3665;--o:#FF7A00;--bg:#F5F7FA;--t:#18314F;--m:#77869A;--l:#DFE6EE;--g:#157347}*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(180deg,#F8FAFC,#F3F6FA);color:var(--t);min-height:100vh}.page{min-height:100vh;display:grid;place-items:center;padding:20px}.card{width:min(900px,100%);background:#fff;border:1px solid var(--l);border-radius:26px;padding:26px;box-shadow:0 18px 50px #0f36651a}.brand{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:18px}.brand img{width:58px;height:58px;border-radius:16px;display:block;box-shadow:0 10px 26px #0f36652b}.brand-word{font-weight:950;font-size:29px;color:var(--n);letter-spacing:1px}.brand-word span{color:var(--o)}h1{text-align:center;color:var(--n);font-size:24px;margin:0 0 6px}.sub{text-align:center;color:var(--m);font-size:12px;line-height:1.5;margin:0 auto 20px;max-width:680px}.tabs{display:grid;grid-template-columns:1fr 1fr;background:#f1f5f9;border-radius:12px;padding:4px;margin:0 auto 17px;max-width:520px}.tabs button{border:0;background:transparent;border-radius:9px;padding:10px;font-weight:850;color:#66788c;cursor:pointer}.tabs button.active{background:#fff;color:var(--n);box-shadow:0 2px 8px #0000000c}.form-wrap{max-width:520px;margin:auto}.field{margin-bottom:12px}.field label{display:block;font-size:11px;font-weight:850;color:var(--n);margin-bottom:6px}.field input{width:100%;height:48px;border:1px solid var(--l);border-radius:13px;padding:0 13px;outline:none;font-size:14px}.field input:focus{border-color:var(--n);box-shadow:0 0 0 3px #0f366512}.plans{display:none;margin:8px 0 18px}.plans.show{display:block}.plans-title{text-align:center;color:var(--n);font-size:17px;font-weight:950;margin:4px 0 5px}.plans-sub{text-align:center;color:var(--m);font-size:11px;margin:0 0 14px}.role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.role{border:1px solid var(--l);background:#fff;border-radius:16px;padding:14px;text-align:left;cursor:pointer;color:var(--n);min-height:190px}.role b{display:block;font-size:13px}.role .price{font-size:18px;font-weight:950;color:var(--o);margin:8px 0 7px}.role small{display:block;color:var(--m);font-size:10px;line-height:1.45}.role ul{margin:9px 0 0;padding-left:16px;color:#526274;font-size:10px;line-height:1.55}.role.active{border-color:var(--o);box-shadow:0 0 0 2px #ff7a0018;background:#fffaf5}.role.client{min-height:auto;grid-column:1/-1}.seller-plans{display:none;margin-top:12px;border-top:1px solid var(--l);padding-top:14px}.seller-plans.show{display:block}.seller-title{font-size:12px;font-weight:900;color:var(--n);margin-bottom:9px}.seller-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.seller-plan{border:1px solid var(--l);background:#fff;border-radius:14px;padding:12px;text-align:left;cursor:pointer;color:var(--n)}.seller-plan strong{font-size:11px;display:block}.seller-plan .seller-price{font-size:17px;font-weight:950;color:var(--o);margin:6px 0}.seller-plan p{font-size:9px;color:var(--m);line-height:1.45;margin:0}.seller-plan.active{border-color:var(--n);box-shadow:0 0 0 2px #0f366512;background:#f8fbff}.form-caption{display:none;text-align:center;font-size:11px;font-weight:850;color:var(--n);margin:18px 0 10px}.form-caption.show{display:block}.primary{width:100%;height:49px;border:0;border-radius:13px;background:var(--o);color:#fff;font-weight:900;cursor:pointer}.primary:disabled{opacity:.6;cursor:wait}.status{min-height:18px;margin-top:12px;text-align:center;font-size:11px;color:#9A2E2E;font-weight:700}.status.ok{color:var(--g)}.note{margin-top:16px;border-top:1px solid var(--l);padding-top:13px;text-align:center;color:var(--m);font-size:10px;line-height:1.45}@media(max-width:760px){.role-grid,.seller-grid{grid-template-columns:1fr}.role.client{grid-column:auto}.card{padding:22px 17px;border-radius:21px;box-shadow:none}.page{padding:12px}}
+</style></head>
+<body><div class="page"><section class="card"><div class="brand"><img src="https://static.wixstatic.com/media/1e8b62_14cc2245de4a46f88665dc88c3ef3c7a~mv2.png" alt="VELUM"><div class="brand-word">VE<span>LUM</span></div></div><h1 id="title">Entrar na sua conta</h1><p class="sub" id="subtitle">A VELUM identifica seu perfil e leva você direto para sua área.</p><div class="tabs"><button id="tabLogin" class="active">Entrar</button><button id="tabRegister">Criar conta</button></div>
+<div class="plans" id="plans"><div class="plans-title">Como você quer fazer parte da VELUM?</div><p class="plans-sub">Escolha uma opção para continuar com o cadastro.</p><div class="role-grid">
+<button type="button" class="role" data-role="revendedora" onclick="selectRole('revendedora')"><b>Ser Revendedora</b><small>Monte sua vitrine, escolha produtos e venda pela VELUM.</small></button>
+<button type="button" class="role" data-role="entregador" onclick="selectRole('entregador')"><b>Ser Entregador</b><small>Cadastre-se para receber oportunidades de entrega pela VELUM.</small></button>
+<button type="button" class="role" data-role="lojista" onclick="selectRole('lojista')"><b>Ser Loja Parceira</b><small>Cadastre sua loja e disponibilize seus produtos na VELUM.</small></button>
+</div></div>
+<div class="form-wrap"><div class="form-caption" id="formCaption">Crie sua conta para continuar</div><div class="field"><label>E-mail</label><input id="email" type="email" autocomplete="email" placeholder="seuemail@exemplo.com"></div><div class="field"><label>Senha</label><input id="senha" type="password" autocomplete="current-password" placeholder="Digite sua senha"></div><button class="primary" id="submit">Entrar</button><button type="button" id="forgotPassword" style="background:none;border:0;color:#0F3665;text-decoration:underline;margin:10px auto;display:block;font-weight:800;cursor:pointer">Esqueci minha senha</button><div style="display:flex;align-items:center;gap:10px;margin:18px 0 12px;color:#77869A;font-size:12px"><span style="height:1px;background:#dfe6ee;flex:1"></span>ou continue com<span style="height:1px;background:#dfe6ee;flex:1"></span></div><button type="button" id="googleLogin" style="width:100%;height:49px;display:flex;align-items:center;justify-content:center;gap:12px;background:#fff;color:#17314f;border:1px solid #dfe6ee;border-radius:12px;font-weight:850;cursor:pointer"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.23c0-.68-.06-1.35-.18-2H12v3.78h5.38a4.61 4.61 0 0 1-2 3.02v2.51h3.24c1.9-1.75 2.98-4.32 2.98-7.31Z"/><path fill="#34A853" d="M12 22a9.5 9.5 0 0 0 6.62-2.46l-3.24-2.51a5.99 5.99 0 0 1-9-3.15H3.04v2.58A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.38 13.88a6 6 0 0 1 0-3.76V7.54H3.04a10 10 0 0 0 0 8.92l3.34-2.58Z"/><path fill="#EA4335" d="M12 6.01c1.4 0 2.65.48 3.64 1.43l2.88-2.88A9.54 9.54 0 0 0 12 2a10 10 0 0 0-8.96 5.54l3.34 2.58A5.99 5.99 0 0 1 12 6.01Z"/></svg><span>Continuar com Google</span></button><p style="font-size:11px;color:#64748b;text-align:center;margin:10px 0">Entre com Google ou com seu e-mail e senha.</p><div class="status" id="status"></div><div class="note">Se você já possui cadastro, basta entrar: seu painel será aberto automaticamente.</div></div></section></div>
+<script>
+const $=id=>document.getElementById(id);let mode='login',selectedRole='',actionWatchdog=null;
+function stopWatchdog(){clearTimeout(actionWatchdog);actionWatchdog=null}
+function startWatchdog(){
+ stopWatchdog();
+ actionWatchdog=setTimeout(()=>{
+   busy(false);
+   status('A operação demorou demais. Verifique sua conexão e tente novamente.');
+ },25000);
+}
+function send(type,payload={}){parent.postMessage({source:'VELUM_LOGIN',type,payload},'*')}
+function status(msg,ok=false){$('status').textContent=msg||'';$('status').className='status'+(ok?' ok':'')}
+function busy(on,label){
+ $('submit').disabled=on;
+ if(on){$('submit').textContent=label||'Aguarde...';return}
+ $('submit').textContent=mode==='login'?'Entrar':'Criar conta';
+}
+function selectRole(role){
+ selectedRole=String(role||'').trim();
+ send('ROLE_SELECTED',{tipo:selectedRole});
+ document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===selectedRole));
+ if(mode==='register'){
+   const nomes={revendedora:'Revendedora',entregador:'Entregador',lojista:'Loja Parceira'};
+   $('plans').classList.remove('show');
+   document.querySelector('.form-wrap').style.display=selectedRole?'block':'none';
+   $('formCaption').classList.toggle('show',!!selectedRole);
+   $('formCaption').textContent=selectedRole?'Crie sua conta de '+(nomes[selectedRole]||'VELUM'):'Crie sua conta para continuar';
+   $('title').textContent=selectedRole?'Criar conta de '+(nomes[selectedRole]||'VELUM'):'Crie sua conta';
+   $('subtitle').textContent=selectedRole?'Informe seu e-mail e crie uma senha para continuar para o cadastro.':'Escolha seu perfil, crie sua conta e continue o cadastro.';
+   if(selectedRole){
+     setTimeout(()=>document.querySelector('.form-wrap')?.scrollIntoView({behavior:'smooth',block:'start'}),50);
+   }
+ }
+ busy(false);status('');
+}
+function setMode(m,role=''){
+ mode=m;
+ const isLogin=m==='login';
+ $('tabLogin').classList.toggle('active',isLogin);
+ $('tabRegister').classList.toggle('active',!isLogin);
+ $('plans').classList.toggle('show',!isLogin);
+ $('title').textContent=isLogin?'Entrar na sua conta':'Crie sua conta';
+ $('subtitle').textContent=isLogin?'A VELUM identifica seu perfil e leva você direto para sua área.':'Escolha seu perfil, crie sua conta e continue o cadastro.';
+ if(isLogin){
+   document.querySelector('.form-wrap').style.display='block';
+   $('formCaption').classList.remove('show');
+ }else{
+   if(role)selectRole(role);
+   else{
+     selectedRole='';
+     document.querySelectorAll('[data-role]').forEach(b=>b.classList.remove('active'));
+     document.querySelector('.form-wrap').style.display='none';
+   }
+ }
+ busy(false);status('');
+}
+$('tabLogin').onclick=()=>{setMode('login');$('forgotPassword').style.display='block'};
+$('tabRegister').onclick=()=>{if(mode==='register'&&selectedRole){selectedRole='';document.querySelector('.form-wrap').style.display='none';$('formCaption').classList.remove('show');$('plans').classList.add('show');$('title').textContent='Escolha seu cadastro';$('subtitle').textContent='Selecione uma das opções abaixo para continuar.';document.querySelectorAll('[data-role]').forEach(b=>b.classList.remove('active'));busy(false);status('');return}setMode('register')};
+document.querySelectorAll('[data-role]').forEach(b=>b.onclick=()=>selectRole(b.dataset.role));
+$('forgotPassword').onclick=()=>send('FORGOT_PASSWORD');
+$('googleLogin').onclick=()=>{status('Abrindo login social Wix...',true);send('SOCIAL_LOGIN',{provider:'google',tipo:selectedRole||''})};
+$('submit').onclick=()=>{
+ if($('submit').disabled)return;
+ const email=$('email').value.trim(),senha=$('senha').value;
+ if(!email)return status('Informe seu e-mail.');
+ if(!senha)return status('Informe sua senha.');
+ if(mode==='register'){
+   if(!selectedRole)return status('Escolha como você quer usar a VELUM.');
+   busy(true,'Criando...');
+   status('Criando sua conta...',true);
+   startWatchdog();
+   send('REGISTER',{email,senha,tipo:selectedRole});
+   return;
+ }
+ busy(true,'Entrando...');
+ status('Entrando...',true);
+ startWatchdog();
+ send('LOGIN',{email,senha});
+};
+window.addEventListener('message',e=>{
+ const m=e.data||{};
+ if(m.source!=='VELUM_LOGIN_PAGE')return;
+ if(m.type==='STATUS'){
+   status(m.payload?.message||'',m.payload?.ok===true);
+   busy(m.payload?.busy===true,m.payload?.label);
+   if(m.payload?.busy!==true)stopWatchdog();
+ }
+ if(m.type==='INIT'){
+   const tipo=String(m.payload?.tipo||'').trim();
+   if(tipo&&['revendedora','entregador','lojista'].includes(tipo))setMode('register',tipo);
+ }
+});
+send('READY');
+</script>
+
+</body></html>
