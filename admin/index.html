@@ -27,6 +27,18 @@
 <div class="modal" id="dispatchModal"><div class="modal-card" style="width:min(560px,100%)"><div class="modal-head"><div><h2>Chamar outro entregador</h2><p>Escolha um entregador específico ou envie a corrida para todos.</p></div><button class="modal-close" id="dispatchClose">Fechar</button></div><button class="dispatch-all" id="dispatchAll">DISPARAR PARA TODOS</button><div class="dispatch-list" id="dispatchList"><div class="loading">Carregando entregadores...</div></div></div></div>
 <div class="toast" id="toast"></div>
 <script>
+// Early bootstrap independent of the large administrative UI script.
+(function(){
+ let confirmed=false,tries=0;
+ function showError(message){const l=document.getElementById('adminLoading');if(!l)return;l.innerHTML='';const box=document.createElement('div');box.style.cssText='padding:20px;text-align:center;max-width:420px';const txt=document.createElement('div');txt.textContent=message;const btn=document.createElement('button');btn.textContent='TENTAR NOVAMENTE';btn.style.cssText='margin-top:15px;border:0;border-radius:10px;background:#0F3665;color:white;padding:14px';btn.onclick=()=>{tries=0;request()};box.append(txt,btn);l.append(box)}
+ function request(){if(confirmed)return;tries++;try{parent.postMessage({source:'VELUM_ADMIN_PORTAL',type:'READY',payload:{}},'*')}catch(e){}if(tries>=9)showError('A comunica??o com o Wix n?o foi conclu?da. Atualize o painel ou tente novamente.')}
+ window.addEventListener('message',function(e){const m=e.data||{};if(m.source!=='VELUM_ADMIN_PORTAL_PAGE')return;if((m.type==='LOGIN_RESULT'||m.type==='SESSION_RESULT')&&m.payload?.ok){confirmed=true;const l=document.getElementById('adminLoading');if(l)l.remove();const login=document.getElementById('loginView'),app=document.getElementById('appView');if(login)login.style.display='none';if(app){app.classList.remove('hidden');app.style.display='block'}try{if(m.payload.token)sessionStorage.setItem('velum_admin_token',m.payload.token)}catch(e){}}else if((m.type==='LOGIN_RESULT'||m.type==='SESSION_RESULT')&&!m.payload?.ok){showError(m.payload?.mensagem||'Sess?o administrativa expirada. Entre novamente.')}});
+ window.addEventListener('error',function(e){showError('Erro ao iniciar o painel: '+(e.message||'falha desconhecida'))});
+ window.addEventListener('unhandledrejection',function(e){showError('Falha ao carregar os dados administrativos. Tente novamente.')});
+ request();setInterval(()=>{if(!confirmed&&tries<9)request()},1800);
+})();
+</script>
+<script>
 const $=id=>document.getElementById(id);let token=sessionStorage.getItem('velum_admin_token')||'',current='sellers',rows=[],visibleRows=[],freights=[],editingFreight='',callDriverId='',callDriverName='',callQuotedFee=null,trackingWindows={},suggestTimers={},suggestSeq={pickup:0,delivery:0},logisticsStages=[],dispatchDeliveryId='',dispatchDrivers=[],adminPoll=null,editingDeliveryId='';const selectedLabels=new Set();
 const cfg={sellers:{title:'Lojas Parceiras',subtitle:'Gerencie lojas fornecedoras, dados de contato e ativação.'},resellers:{title:'Revendedoras',subtitle:'Gerencie sacoleiras, vitrines e status de ativação.'},drivers:{title:'Entregadores',subtitle:'Gerencie entregadores, veículos e disponibilidade do cadastro.'},deliveries:{title:'Acompanhar entregas',subtitle:'Acompanhe em tempo real as corridas ativas da rede VELUM.'},external:{title:'Rastreios externos',subtitle:'Envie rastreios de Correios, Jadlog e outras transportadoras sem criar corrida VELUM.'},freights:{title:'Fretes',subtitle:'Configure taxas fixas por cidade, UF e faixa de CEP.'}};
 function send(type,payload={}){parent.postMessage({source:'VELUM_ADMIN_PORTAL',type,payload},'*')}
