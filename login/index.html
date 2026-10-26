@@ -16,7 +16,7 @@ function startWatchdog(){
  stopWatchdog();
  actionWatchdog=setTimeout(()=>{
    busy(false);
-   status('A operação demorou demais. Verifique sua conexão e tente novamente.');
+   showNativeFallback(loginAcknowledged?'O Wix n?o concluiu o login. Entre pelo acesso seguro do Wix.':'O formul?rio n?o recebeu confirma??o. Use o acesso seguro do Wix.');
  },14000);
 }
 function showNativeFallback(msg){status(msg||'Use o acesso alternativo do Wix.');let b=$('wixNativeLogin');if(!b){b=document.createElement('button');b.type='button';b.id='wixNativeLogin';b.textContent='Entrar pelo Wix';b.style.cssText='width:100%;padding:14px;margin-top:12px;border:2px solid #153861;background:white;color:#153861;border-radius:12px;font-weight:800;cursor:pointer';$('submit').insertAdjacentElement('afterend',b)}b.hidden=false;b.onclick=()=>{status('Abrindo acesso do Wix...',true);send('NATIVE_LOGIN')};}
