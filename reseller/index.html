@@ -215,7 +215,7 @@ $('saveDefaultMargin').onclick=()=>send('SAVE_DEFAULT_MARGIN',{margem:num($('def
 
 let onboardStage='';
 function setOnboarding(d){
- if(!d||!d.nomeLoja)return;
+ if(!d)return;
  const stage=!d.onboardingPersonalizacao?'personal':!d.onboardingPrecos?'precos':'feito';
  onboardStage=stage;
  const mask=$('onboardMask');if(!mask)return;
