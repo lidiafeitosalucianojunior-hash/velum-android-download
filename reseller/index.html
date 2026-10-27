@@ -313,7 +313,7 @@ const css='@page{size:10cm 15cm;margin:0}*{box-sizing:border-box}body{margin:0;c
 function print(items){try{const list=(Array.isArray(items)?items:[items]).filter(Boolean);if(!list.length)throw Error('Nenhuma entrega selecionada.');const html=list.map(page).join('');const w=window.open('','_blank');if(!w)throw Error('Permita a abertura de janelas para imprimir.');w.document.open();w.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Etiquetas VELUM 10x15</title><style>'+css+'</style></head><body>'+html+'<script>window.onload=function(){setTimeout(function(){window.print()},1000)}<\/script></body></html>');w.document.close();return true;}catch(e){alert(e.message);return false;}}
 function attachRows(container,data){
  const root=document.getElementById(container);if(!root)return;
- const rows=[...root.querySelectorAll('.row,.order-card')];
+ const rows=[...root.querySelectorAll('.row,.order-card,.active-card')];
  rows.forEach((node,i)=>{if(node.querySelector('[data-velum-label]'))return;const x=data?.[i];if(!x)return;const n=normalize(x);if(!n.code || !n.address || !n.name)return;const b=document.createElement('button');b.type='button';b.textContent='Imprimir etiqueta VELUM 10×15';b.setAttribute('data-velum-label','');b.style.cssText='background:#0f3665;color:#fff;border:0;border-radius:9px;padding:10px 13px;cursor:pointer;font-weight:750;margin-top:10px';b.onclick=()=>print(x);node.appendChild(b)});
 }
 window.VelumLabel={page,print,attachRows,normalize};
