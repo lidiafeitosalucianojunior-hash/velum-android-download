@@ -10,13 +10,13 @@
 </div></div>
 <div class="form-wrap"><div class="form-caption" id="formCaption">Crie sua conta para continuar</div><div class="field"><label>E-mail</label><input id="email" type="email" autocomplete="email" placeholder="seuemail@exemplo.com"></div><div class="field"><label>Senha</label><input id="senha" type="password" autocomplete="current-password" placeholder="Digite sua senha"></div><button class="primary" id="submit">Entrar</button><button type="button" id="forgotPassword" style="background:none;border:0;color:#0F3665;text-decoration:underline;margin:10px auto;display:block;font-weight:800;cursor:pointer">Esqueci minha senha</button><div style="display:flex;align-items:center;gap:10px;margin:18px 0 12px;color:#77869A;font-size:12px"><span style="height:1px;background:#dfe6ee;flex:1"></span>ou continue com<span style="height:1px;background:#dfe6ee;flex:1"></span></div><button type="button" id="googleLogin" style="width:100%;height:49px;display:flex;align-items:center;justify-content:center;gap:12px;background:#fff;color:#17314f;border:1px solid #dfe6ee;border-radius:12px;font-weight:850;cursor:pointer"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.23c0-.68-.06-1.35-.18-2H12v3.78h5.38a4.61 4.61 0 0 1-2 3.02v2.51h3.24c1.9-1.75 2.98-4.32 2.98-7.31Z"/><path fill="#34A853" d="M12 22a9.5 9.5 0 0 0 6.62-2.46l-3.24-2.51a5.99 5.99 0 0 1-9-3.15H3.04v2.58A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.38 13.88a6 6 0 0 1 0-3.76V7.54H3.04a10 10 0 0 0 0 8.92l3.34-2.58Z"/><path fill="#EA4335" d="M12 6.01c1.4 0 2.65.48 3.64 1.43l2.88-2.88A9.54 9.54 0 0 0 12 2a10 10 0 0 0-8.96 5.54l3.34 2.58A5.99 5.99 0 0 1 12 6.01Z"/></svg><span>Continuar com Google</span></button><p style="font-size:11px;color:#64748b;text-align:center;margin:10px 0">Entre com Google ou com seu e-mail e senha.</p><div class="status" id="status"></div><div class="note">Se você já possui cadastro, basta entrar: seu painel será aberto automaticamente.</div></div></section></div>
 <script>
-const $=id=>document.getElementById(id);let mode='login',selectedRole='',actionWatchdog=null;
+const $=id=>document.getElementById(id);let mode='login',selectedRole='',actionWatchdog=null,loginAcknowledged=false;
 function stopWatchdog(){clearTimeout(actionWatchdog);actionWatchdog=null}
 function startWatchdog(){
  stopWatchdog();
  actionWatchdog=setTimeout(()=>{
    busy(false);
-   status('A operação demorou demais. Verifique sua conexão e tente novamente.');
+   status(loginAcknowledged ? 'VELUM E02: o Wix recebeu o pedido, mas não concluiu a operação.' : 'VELUM E01: o formulário não conseguiu comunicar o login à página Wix.');
  },25000);
 }
 function send(type,payload={}){parent.postMessage({source:'VELUM_LOGIN',type,payload},'*')}
@@ -83,6 +83,7 @@ $('submit').onclick=()=>{
    send('REGISTER',{email,senha,tipo:selectedRole});
    return;
  }
+ loginAcknowledged=false;
  busy(true,'Entrando...');
  status('Entrando...',true);
  startWatchdog();
@@ -91,6 +92,7 @@ $('submit').onclick=()=>{
 window.addEventListener('message',e=>{
  const m=e.data||{};
  if(m.source!=='VELUM_LOGIN_PAGE')return;
+ if(m.type==='LOGIN_ACK'){loginAcknowledged=true;return}
  if(m.type==='STATUS'){
    status(m.payload?.message||'',m.payload?.ok===true);
    busy(m.payload?.busy===true,m.payload?.label);
