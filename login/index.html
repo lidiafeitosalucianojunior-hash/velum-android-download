@@ -93,6 +93,15 @@ window.addEventListener('message',e=>{
  const m=e.data||{};
  if(m.source!=='VELUM_LOGIN_PAGE')return;
  if(m.type==='LOGIN_ACK'){loginAcknowledged=true;lastLoginStage='recebido pelo Wix';return}
+ if(m.type==='NAVIGATION_TARGET'){
+   const route=String(m.payload?.url||'');
+   if(route.startsWith('/')&&!route.startsWith('//')){
+     let link=document.getElementById('pendingStepLink');
+     if(!link){link=document.createElement('a');link.id='pendingStepLink';link.textContent='Abrir minha etapa pendente';link.target='_top';link.rel='noopener';link.style.cssText='display:block;text-align:center;margin:12px 0;padding:14px;border-radius:12px;background:#1c3964;color:white;font-weight:700;text-decoration:none';document.getElementById('status').insertAdjacentElement('afterend',link)}
+     link.href='https://www.vaidevelum.com'+route;
+   }
+   return;
+ }
  if(m.type==='STATUS'){
    if(m.payload?.busy===true) lastLoginStage=String(m.payload?.message||'processando');
    status(m.payload?.message||'',m.payload?.ok===true);
