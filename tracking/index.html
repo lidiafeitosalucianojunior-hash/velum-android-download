@@ -190,6 +190,23 @@ setTimeout(reportTrackingHeight,600);
  window.addEventListener('message',e=>{if(e.origin!==location.origin||e.data?.source!=='VELUM_TRACKING_FULLSCREEN')return;if(e.data.type==='READY')forward();if(e.data.type!=='READY')send(e.data.type,{code:e.data.code})});
  window.addEventListener('message',e=>{if(e.data?.source==='VELUM_TRACKING_PAGE'&&e.data.type==='DATA')setTimeout(forward,0)});
 })();
+// Consulta direta: permite testar o rastreamento completo sem depender do iframe.
+(async function loadDirectTracking(){
+ const params=new URLSearchParams(location.search);
+ const token=params.get('token');
+ if(!token)return;
+ const endpoint='https://www.vaidevelum.com/_functions/velumTrackingPublic?token='+encodeURIComponent(token);
+ const refresh=async()=>{
+  try{
+   const r=await fetch(endpoint,{cache:'no-store',mode:'cors'});
+   const data=await r.json();
+   if(data.ok&&data.tracking){window.velumLastTracking=data.tracking;render(data.tracking)}
+   else renderError(data.mensagem||'Entrega não encontrada.');
+  }catch(e){renderError('Não foi possível atualizar o rastreamento. Tente novamente.')}
+ };
+ await refresh();
+ setInterval(refresh,15000);
+})();
 send('READY');
 setInterval(()=>send('REFRESH'),15000);
 </script>
