@@ -41,7 +41,7 @@ const labels={
 const order=['PREPARING','LOGISTICS_PACKED','LOGISTICS_IN_TRANSIT','AT_LOGISTICS_CENTER','LOGISTICS_READY_FOR_DRIVER','WAITING_DRIVER','DRIVER_ACCEPTED','GOING_TO_STORE','AT_STORE','COLLECTED','OUT_FOR_DELIVERY','DELIVERED'];
 const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 let map=null,marker=null,lastStatus='';
-function send(type,payload={}){if(new URLSearchParams(location.search).has('full')&&window.opener){window.opener.postMessage({source:'VELUM_TRACKING_FULLSCREEN',type,...payload},location.origin);return;}window.parent.postMessage({source:'VELUM_CUSTOMER_TRACKING',type,...payload},'*')}
+function send(type,payload={}){if(new URLSearchParams(location.search).has('token')){if(['CONFIRM_CUSTOMER_DELIVERY','CONFIRM_CUSTOMER_PICKUP','REQUEST_HOME_DELIVERY'].includes(type)){directTrackingAction(type,payload)}return;}if(new URLSearchParams(location.search).has('full')&&window.opener){window.opener.postMessage({source:'VELUM_TRACKING_FULLSCREEN',type,...payload},location.origin);return;}window.parent.postMessage({source:'VELUM_CUSTOMER_TRACKING',type,...payload},'*')}
 function statusNotice(status){const copy=labels[status]||['Pedido atualizado','O status do seu pedido mudou.'];const el=document.createElement('div');el.textContent=copy[0]+' — '+copy[1];el.style.cssText='position:fixed;left:16px;right:16px;bottom:16px;background:#17324d;color:#fff;padding:12px 14px;border-radius:12px;z-index:9999;font-size:12px;font-weight:700;box-shadow:0 8px 30px #0003';document.body.appendChild(el);setTimeout(()=>el.remove(),4000);try{if('Notification'in window&&Notification.permission==='granted')new Notification(copy[0],{body:copy[1]})}catch(_){}}
 function steps(status){const idx=order.indexOf(status);return Array.from({length:5},(_,i)=>`<span class="step ${idx>=Math.ceil((i+1)*order.length/5)-1?'on':''}"></span>`).join('')}
 function formatTime(value){if(!value)return '—';const d=new Date(value);return Number.isNaN(d.getTime())?'—':d.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}
@@ -183,6 +183,7 @@ setTimeout(reportTrackingHeight,600);
    return;
  }
  let popup=null;
+ if(new URLSearchParams(location.search).has('token'))return;
  const button=document.createElement('button');button.type='button';button.textContent='Ver rastreamento completo';button.style.cssText='display:block;width:100%;max-width:720px;margin:0 auto 12px;padding:14px;border:1px solid #0f3665;border-radius:12px;background:#0f3665;color:white;font:800 13px Inter,Arial,sans-serif;cursor:pointer';
  document.querySelector('.app')?.insertBefore(button,document.getElementById('content'));
  const forward=()=>{if(popup&&!popup.closed&&window.velumLastTracking)popup.postMessage({source:'VELUM_TRACKING_PAGE',type:'DATA',tracking:window.velumLastTracking},location.origin)};
@@ -190,6 +191,19 @@ setTimeout(reportTrackingHeight,600);
  window.addEventListener('message',e=>{if(e.origin!==location.origin||e.data?.source!=='VELUM_TRACKING_FULLSCREEN')return;if(e.data.type==='READY')forward();if(e.data.type!=='READY')send(e.data.type,{code:e.data.code})});
  window.addEventListener('message',e=>{if(e.data?.source==='VELUM_TRACKING_PAGE'&&e.data.type==='DATA')setTimeout(forward,0)});
 })();
+async function directTrackingAction(action,payload={}){
+ const token=new URLSearchParams(location.search).get('token');
+ if(!token)return;
+ const names={CONFIRM_CUSTOMER_DELIVERY:'CUSTOMER_DELIVERY_CONFIRMATION',CONFIRM_CUSTOMER_PICKUP:'CUSTOMER_PICKUP_CONFIRMATION',REQUEST_HOME_DELIVERY:'HOME_DELIVERY_REQUEST_RESULT'};
+ try{
+  const r=await fetch('https://www.vaidevelum.com/_functions/velumTrackingAction',{method:'POST',mode:'cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,action,code:payload.code||''})});
+  const result=await r.json();
+  alert(result.mensagem||(result.ok?'Solicitação concluída.':'Não foi possível concluir.'));
+  if(result.ok)await directTrackingRefresh();
+  else if(!r.ok)await directTrackingRefresh();
+ }catch(e){alert('Não foi possível confirmar agora. Verifique a conexão e tente novamente.');await directTrackingRefresh()}
+}
+let directTrackingRefresh=async()=>{};
 // Consulta direta: permite testar o rastreamento completo sem depender do iframe.
 (async function loadDirectTracking(){
  const params=new URLSearchParams(location.search);
@@ -204,6 +218,7 @@ setTimeout(reportTrackingHeight,600);
    else renderError(data.mensagem||'Entrega não encontrada.');
   }catch(e){renderError('Não foi possível atualizar o rastreamento. Tente novamente.')}
  };
+ directTrackingRefresh=refresh;
  await refresh();
  setInterval(refresh,15000);
 })();
