@@ -152,7 +152,7 @@ function renderMap(lat,lng){
   else {marker.setLatLng(point);map.panTo(point);}
 }
 function renderError(message){document.getElementById('content').innerHTML=`<div class="card empty">${esc(message||'Não foi possível localizar esta entrega.')}</div>`}
-window.addEventListener('message',e=>{const m=e.data||{};if(m.source!=='VELUM_TRACKING_PAGE')return;if(m.type==='DATA'&&m.tracking)render(m.tracking);if(m.type==='ERROR')renderError(m.message);if(m.type==='HOME_DELIVERY_REQUEST_RESULT'){alert(m.mensagem||'SolicitaÃ§Ã£o registrada.');if(!m.ok)send('REFRESH')}if(m.type==='CUSTOMER_PICKUP_CONFIRMATION'&&!m.ok){alert(m.mensagem||'Não foi possível confirmar.');send('REFRESH')}});
+window.addEventListener('message',e=>{const m=e.data||{};if(m.source!=='VELUM_TRACKING_PAGE')return;if(m.type==='DATA'&&m.tracking)window.velumLastTracking=m.tracking;if(m.type==='DATA'&&m.tracking)render(m.tracking);if(m.type==='ERROR')renderError(m.message);if(m.type==='HOME_DELIVERY_REQUEST_RESULT'){alert(m.mensagem||'SolicitaÃ§Ã£o registrada.');if(!m.ok)send('REFRESH')}if(m.type==='CUSTOMER_PICKUP_CONFIRMATION'&&!m.ok){alert(m.mensagem||'Não foi possível confirmar.');send('REFRESH')}});
 let reportedTrackingHeight=0;
 function reportTrackingHeight(){
  const app=document.querySelector('.app');
@@ -171,6 +171,23 @@ window.addEventListener('resize',reportTrackingHeight);
 window.addEventListener('load',reportTrackingHeight);
 setTimeout(reportTrackingHeight,100);
 setTimeout(reportTrackingHeight,600);
+// Modo de teste em tela completa: contorna o limite de altura do iframe Wix.
+(function(){
+ const full=new URLSearchParams(location.search).has('full');
+ if(full){
+   window.addEventListener('load',()=>{try{window.opener?.postMessage({source:'VELUM_TRACKING_FULLSCREEN',type:'READY'},location.origin)}catch(_){}});
+   window.addEventListener('message',e=>{if(e.origin!==location.origin||e.data?.source!=='VELUM_TRACKING_PAGE')return;if(e.data.type==='DATA'&&e.data.tracking)window.velumLastTracking=e.data.tracking});
+   setInterval(()=>{try{window.opener?.postMessage({source:'VELUM_TRACKING_FULLSCREEN',type:'REFRESH'},location.origin)}catch(_){}},15000);
+   return;
+ }
+ let popup=null;
+ const button=document.createElement('button');button.type='button';button.textContent='Ver rastreamento completo';button.style.cssText='display:block;width:100%;max-width:720px;margin:0 auto 12px;padding:14px;border:1px solid #0f3665;border-radius:12px;background:#0f3665;color:white;font:800 13px Inter,Arial,sans-serif;cursor:pointer';
+ document.querySelector('.app')?.insertBefore(button,document.getElementById('content'));
+ const forward=()=>{if(popup&&!popup.closed&&window.velumLastTracking)popup.postMessage({source:'VELUM_TRACKING_PAGE',type:'DATA',tracking:window.velumLastTracking},location.origin)};
+ button.onclick=()=>{const u=new URL(location.href);u.searchParams.set('full','1');popup=window.open(u.href,'_blank');if(!popup){alert('Permita abrir uma nova aba para visualizar o rastreamento completo.');return;}setTimeout(forward,600);setTimeout(forward,1500)};
+ window.addEventListener('message',e=>{if(e.origin!==location.origin||e.data?.source!=='VELUM_TRACKING_FULLSCREEN')return;if(e.data.type==='READY')forward();if(e.data.type==='REFRESH')send('REFRESH')});
+ window.addEventListener('message',e=>{if(e.data?.source==='VELUM_TRACKING_PAGE'&&e.data.type==='DATA')setTimeout(forward,0)});
+})();
 send('READY');
 setInterval(()=>send('REFRESH'),15000);
 </script>
