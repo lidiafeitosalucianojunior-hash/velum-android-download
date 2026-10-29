@@ -222,6 +222,7 @@ $('logout').onclick=()=>send('LOGOUT');
 
 window.addEventListener('message',e=>{const m=e.data||{};if(m.source!=='LUMEN_ADMIN_PANEL_PAGE')return;const d=m.payload||{};
  if(m.type==='DATA'){try{render(d)}catch(err){console.warn('Legacy render:',err)}try{window.velumDrawRides(d)}catch(err){console.error('Rides render:',err);document.getElementById('ridesOverviewBody').textContent='Erro ao apresentar corridas. Toque em Atualizar.'}}
+ if(m.type==='ERROR'){const row=document.getElementById('ridesOverviewBody');if(row)row.innerHTML='<tr><td colspan="6">'+esc(d.message||m.message||'Falha ao carregar corridas. Toque em Atualizar.')+'</td></tr>';velumDashboardLoaded=true;}
  if(m.type==='ERROR')notice(d.message||m.message||'Não foi possível carregar.',false);
  if(m.type==='SUGGEST_RESULT'){const box=$('deliverySuggestions');const items=Array.isArray(d.items)?d.items:[];box.innerHTML=items.map((x,i)=>'<div class="suggestion" data-i="'+i+'">'+esc(x.label||x.address)+'</div>').join('');box.classList.toggle('on',items.length>0);box.querySelectorAll('[data-i]').forEach(el=>el.onclick=()=>{const x=items[Number(el.dataset.i)];$('deliveryAddress').value=x.address||x.label||'';$('deliveryCity').value=x.city||'';$('deliveryState').value=x.state||'';$('deliveryZipCode').value=x.zipCode||'';box.classList.remove('on')})}
  if(m.type==='CALCULATE_RESULT'){$('calc').disabled=false;$('calc').textContent=editingDeliveryId?'RECALCULAR FRETE E ROTA':'CALCULAR ENTREGA';if(!d.ok){currentFee=0;return notice(d.mensagem||'Não foi possível calcular.',false)}currentFee=Number(d.shipping?.amount)||0;routeReview();notice('Trajeto calculado. Revise antes de confirmar.',true)}
@@ -241,7 +242,7 @@ renderStops();send('READY');
 let velumDashboardLoaded=false;
 window.addEventListener('message',event=>{if(event.data?.source==='LUMEN_ADMIN_PANEL_PAGE'&&event.data.type==='DATA')velumDashboardLoaded=true});
 let velumLoadAttempts=0;
-const velumRetry=setInterval(()=>{if(velumDashboardLoaded||velumLoadAttempts>=5){clearInterval(velumRetry);if(!velumDashboardLoaded){const body=document.getElementById('ridesOverviewBody');if(body&&body.textContent.includes('Aguardando'))body.textContent='Não foi possível carregar as corridas. Toque em Atualizar.'}return}velumLoadAttempts++;send('REFRESH')},2500);
+const velumRetry=setInterval(()=>{if(velumDashboardLoaded||velumLoadAttempts>=5){clearInterval(velumRetry);if(!velumDashboardLoaded){const body=document.getElementById('ridesOverviewBody');if(body&&body.textContent.includes('Aguardando'))body.innerHTML='<tr><td colspan="6">Sem resposta do servidor. Toque em Atualizar para tentar novamente.</td></tr>'}return}velumLoadAttempts++;send('REFRESH')},2500);
 
 </script>
 <script>/* VELUM_HOME_LINK */
