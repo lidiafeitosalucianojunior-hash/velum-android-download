@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>VELUM • Rastrear pedido</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{--navy:#0F3665;--orange:#FF7A00;--bg:#F5F7FA;--white:#fff;--muted:#758196;--line:#E9EDF2;--green:#18A66A;--red:#C94A4A}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:#17263A}
+.app{max-width:720px;margin:auto;padding:22px}.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.brand{display:flex;align-items:center;gap:11px}.mark{width:46px;height:46px;border-radius:15px;background:var(--navy);display:grid;place-items:center;color:#fff;font-weight:900;font-size:22px}.brand b{display:block;color:var(--navy);font-size:19px}.brand span{font-size:10px;color:var(--muted)}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:14px}.eyebrow{font-size:10px;text-transform:uppercase;color:var(--muted);font-weight:850;letter-spacing:.5px}.status{font-size:24px;font-weight:900;color:var(--navy);margin:5px 0}.sub{font-size:12px;color:var(--muted);line-height:1.45}.progress{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:16px}.step{height:5px;border-radius:8px;background:#E5EAF0}.step.on{background:var(--orange)}
+.route{display:grid;gap:12px}.stop{background:#F8FAFC;border-radius:14px;padding:13px}.stop small{display:block;font-size:9px;color:var(--muted);font-weight:850;text-transform:uppercase;margin-bottom:4px}.stop b{font-size:12px}.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:13px;font-size:11px;color:var(--muted)}
+#map{height:300px;border-radius:16px;overflow:hidden;background:#E9EDF2}.map-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.map-head b{color:var(--navy)}.live{font-size:10px;font-weight:850;color:var(--green)}.hidden{display:none}.empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.foot{text-align:center;font-size:10px;color:var(--muted);padding:8px 0 20px}@media(max-width:600px){.app{padding:15px}.status{font-size:21px}#map{height:260px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><div class="brand"><div class="mark">V</div><div><b>VELUM</b><span>Comprou. Chamou. Chegou.</span></div></div></header>
+<div id="content"><div class="card empty">Carregando seu pedido...</div></div>
+<div class="foot">Atualização automática a cada 15 segundos.</div>
+</div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const labels={
+ AVAILABLE_FOR_CUSTOMER_PICKUP:['Disponível para retirada','Sua encomenda chegou ao centro logístico e está disponível para retirada.'],
+ PREPARING:['Entrega criada','A loja está separando, conferindo e embalando sua mercadoria.'],
+ LOGISTICS_PACKED:['Produto embalado e conferido','A mercadoria está pronta para seguir pela logística interna da loja.'],
+ LOGISTICS_IN_TRANSIT:['A caminho do centro logístico','Sua mercadoria está sendo transportada ao centro logístico.'],
+ AT_LOGISTICS_CENTER:['Chegou ao centro logístico','Sua mercadoria chegou ao centro e seguirá para a próxima etapa.'],
+ LOGISTICS_READY_FOR_DRIVER:['Último centro logístico confirmado','A mercadoria chegou ao último centro; o entregador será chamado.'],
+ WAITING_DRIVER:['Procurando entregador','Estamos buscando um entregador disponível.'],
+ DRIVER_ACCEPTED:['Aguardando retirada do pacote','Corrida aceita e entregador confirmado.'],
+ GOING_TO_STORE:['Entregador indo para a loja','O entregador está a caminho da retirada.'],
+ AT_STORE:['Entregador na loja','O pacote será retirado em breve.'],
+ COLLECTED:['Pedido coletado','Seu pedido já está com o entregador.'],
+ OUT_FOR_DELIVERY:['Saiu para entrega','Seu pedido está a caminho de você.'],
+ DELIVERED:['Pedido entregue','Entrega concluída com sucesso.'],
+ CANCELLED:['Entrega cancelada','Esta entrega foi cancelada.']
+};
+const order=['PREPARING','LOGISTICS_PACKED','LOGISTICS_IN_TRANSIT','AT_LOGISTICS_CENTER','LOGISTICS_READY_FOR_DRIVER','WAITING_DRIVER','DRIVER_ACCEPTED','GOING_TO_STORE','AT_STORE','COLLECTED','OUT_FOR_DELIVERY','DELIVERED'];
+const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+let map=null,marker=null,lastStatus='';
+function send(type,payload={}){window.parent.postMessage({source:'VELUM_CUSTOMER_TRACKING',type,...payload},'*')}
+function statusNotice(status){const copy=labels[status]||['Pedido atualizado','O status do seu pedido mudou.'];const el=document.createElement('div');el.textContent=copy[0]+' — '+copy[1];el.style.cssText='position:fixed;left:16px;right:16px;bottom:16px;background:#17324d;color:#fff;padding:12px 14px;border-radius:12px;z-index:9999;font-size:12px;font-weight:700;box-shadow:0 8px 30px #0003';document.body.appendChild(el);setTimeout(()=>el.remove(),4000);try{if('Notification'in window&&Notification.permission==='granted')new Notification(copy[0],{body:copy[1]})}catch(_){}}
+function steps(status){const idx=order.indexOf(status);return Array.from({length:5},(_,i)=>`<span class="step ${idx>=Math.ceil((i+1)*order.length/5)-1?'on':''}"></span>`).join('')}
+function formatTime(value){if(!value)return '—';const d=new Date(value);return Number.isNaN(d.getTime())?'—':d.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}
+</script><script>
+function timeline(t){
+ const state=String(t.status||'');
+ const pickup=!!t.customerPickupAtCenter;
+ const done=state==='DELIVERED';
+ const available=state==='AVAILABLE_FOR_CUSTOMER_PICKUP'||(done&&pickup);
+ const moving=['LOGISTICS_IN_TRANSIT','AT_LOGISTICS_CENTER','LOGISTICS_READY_FOR_DRIVER','AVAILABLE_FOR_CUSTOMER_PICKUP'].includes(state)||done;
+ const accepted=['DRIVER_ACCEPTED','GOING_TO_STORE','AT_STORE','COLLECTED','OUT_FOR_DELIVERY','DELIVERED'].includes(state);
+ const steps=[
+ ['📦','Etiqueta emitida',true,'Etiqueta criada para identificar sua encomenda.'],
+ ['✅','Produto separado e embalado',state!=='PREPARING','A loja preparou sua mercadoria.'],
+ ...(t.internalLogistics?[['🚚','A caminho do próximo centro logístico',moving,'Transporte interno até o centro de distribuição.']]:[]),
+ ...(pickup?[['📍','Disponível para retirada',available,'Aguarde a confirmação de chegada ao centro.']]:[]),
+ ...(!pickup||t.homeDeliveryRequestStatus?[['🛵','Chamando entregador',['WAITING_DRIVER','DRIVER_ACCEPTED','GOING_TO_STORE','AT_STORE','COLLECTED','OUT_FOR_DELIVERY','DELIVERED'].includes(state),'A loja está procurando um entregador.']]:[]),
+ ...(!pickup||t.homeDeliveryRequestStatus?[['✓','Corrida aceita',accepted,'Entregador confirmado para o transporte.']]:[]),
+ ...(!pickup||t.homeDeliveryRequestStatus?[['➤','Entregador e rastreio em tempo real',!!t.trackingActive||done,'Acompanhe a localização quando disponível.']]:[]),
+ ['✓','Concluída',done,'Entrega ou retirada finalizada.']
+ ];
+ return '<section class="card"><div class="eyebrow">Etapas da encomenda</div><div style="display:grid;gap:9px;margin-top:13px">'+steps.map(([icon,name,on,desc])=>'<div style="padding:13px;border:1px solid '+(on?'#b3e1cb':'#e4eaf0')+';background:'+(on?'#f0fbf4':'#f8fafc')+';border-radius:13px"><div style="display:flex;gap:10px;align-items:center"><span aria-hidden="true" style="font-size:19px;flex:0 0 26px;text-align:center">'+icon+'</span><strong style="font-size:13px">'+esc(name)+'</strong><span style="margin-left:auto;color:'+(on?'#177249':'#8591a2')+'">'+(on?'✓':'○')+'</span></div><div class="sub" style="margin:5px 0 0 36px">'+esc(desc)+'</div></div>').join('')+'</div></section>';
+}
+function render(t){
+  const copy=labels[t.status]||['Acompanhando entrega','Atualizando informações do pedido.'];
+  const currentStatus=String(t.status||'');if(lastStatus&&currentStatus&&currentStatus!==lastStatus)statusNotice(currentStatus);if(currentStatus)lastStatus=currentStatus;
+  const driverCard=t.driverName?`<section class="card"><div class="eyebrow">Responsável pela entrega</div><div style="display:flex;align-items:center;gap:12px;margin-top:10px"><div style="width:58px;height:58px;border-radius:50%;overflow:hidden;background:#E9EFF5;display:grid;place-items:center;font-weight:900;color:#0F3665">${t.driverPhoto?'<img src="'+esc(t.driverPhoto)+'" style="width:100%;height:100%;object-fit:cover" alt="Foto do entregador">':esc(String(t.driverName||'V').slice(0,1))}</div><div><b style="display:block;color:#0F3665;font-size:15px">${esc(t.driverName)}</b><span class="sub">${esc([t.driverVehicle,t.driverPlate].filter(Boolean).join(' • '))}</span></div></div></section>`:'';
+  const age=t.lastTrackingUpdate?Date.now()-new Date(t.lastTrackingUpdate).getTime():Infinity;
+  const liveLabel=age<=60000?'● AO VIVO':'● ÚLTIMA POSIÇÃO';
+  const liveStyle=age<=60000?'':' style="color:#C98200"';
+  const currency=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  const amount=Number(t.customerPickupAtCenter ? (t.customerPickupCharge||t.customerPickupExtraFee||0) : (t.paymentAmount||t.deliveryFee||0));
+  const paid=['PAID','APPROVED'].includes(String(t.paymentStatus||'').toUpperCase())||Boolean(t.paidAt)||Boolean(t.driverPaidAt)||String(t.driverPaymentStatus||'').toUpperCase()==='PAID';
+  const payerCode=String(t.deliveryPayer||'').toUpperCase();
+  const payer=['STORE','SENDER','REMETENTE'].includes(payerCode)?'Remetente / loja':['CUSTOMER','RECEIVER','DESTINATARIO'].includes(payerCode)?'Cliente / destinatário':t.deliveryPaymentMode==='PAY_AT_PICKUP'?'Remetente / loja':t.deliveryPaymentMode==='PAY_AT_DELIVERY'?'Cliente / destinatário':'Não definido';
+  const normalizedMode=String(t.deliveryPaymentMode||'').toUpperCase();
+  const shopPays=payer==='Remetente / loja'||normalizedMode==='PAY_AT_PICKUP';
+  const inTransit=['COLLECTED','IN_TRANSIT','OUT_FOR_DELIVERY','GOING_TO_LOGISTICS_CENTER','AT_LOGISTICS_CENTER','AVAILABLE_FOR_CUSTOMER_PICKUP','DELIVERED'].includes(String(t.status||'').toUpperCase())||Boolean(t.internalLogistics&&Number(t.logisticsStageIndex)>0);
+  const storeSettled=shopPays&&(paid||inTransit);
+  const paymentLabel=amount<=0?'GRÁTIS':storeSettled?'PAGO PELA LOJA':shopPays?'PAGAMENTO PELA LOJA PENDENTE':'RECEBER DO CLIENTE';
+  const totalLabel=amount<=0?'Total recebido':storeSettled||paid?'Total recebido':'Total a receber';
+  const paymentAmountText=currency(amount);
+  const addr=(...parts)=>parts.map(x=>String(x||'').trim()).filter(Boolean).join(' · ');
+  const stages=Array.isArray(t.logisticsStages)?t.logisticsStages:[];
+  const index=Math.max(0,Number(t.logisticsStageIndex)||0);
+  let nextTitle='Próxima etapa: entrega no endereço final';
+  let nextDetail=addr(t.customerHomeAddress,t.deliveryCity,t.deliveryState)||'Endereço a confirmar com a loja.';
+  if(t.customerPickupAtCenter&&!t.homeDeliveryRequestedAt){
+    nextTitle=t.status==='AVAILABLE_FOR_CUSTOMER_PICKUP'?'Disponível para retirada':'Próxima etapa: centro de retirada';
+    nextDetail=addr(t.finalLogisticsCenterName,t.finalLogisticsCenterAddress,t.finalLogisticsCenterCity,t.finalLogisticsCenterState)||'Centro de retirada a confirmar.';
+  }else if(t.internalLogistics&&index<stages.length&&!['OUT_FOR_DELIVERY','DELIVERED'].includes(String(t.status||''))){
+    const stage=stages[index]||{};
+    nextTitle='Próxima etapa: '+(stage.name||stage.centerName||'centro logístico');
+    nextDetail=addr(stage.address||stage.centerAddress,stage.city||stage.centerCity,stage.state||stage.uf)||'Centro logístico em processamento.';
+  }
+  const nextCard='<section class="card"><div class="eyebrow">Próxima etapa</div><b style="color:#0f3665;display:block;margin:8px 0">'+esc(nextTitle)+'</b><div class="sub">'+esc(nextDetail)+'</div></section>';
+  const logisticsBlock='';
+  const mapBlock=t.trackingActive?`<section class="card"><div class="map-head"><b>Localização do entregador</b><span class="live"${liveStyle}>${liveLabel}</span></div><div id="map"></div><div class="meta"><span>Última atualização: ${esc(formatTime(t.lastTrackingUpdate))}</span>${age>60000?'<span>O sinal pode estar temporariamente indisponível.</span>':''}</div></section>`:'';
+  document.getElementById('content').innerHTML=`<section class="card"><div class="eyebrow">Pedido ${esc(t.orderId||t.deliveryId)}</div><div class="status">${esc(copy[0])}</div><div class="sub">${esc(copy[1])}</div><div class="progress">${steps(t.status)}</div></section>${timeline(t)}<section class="card"><div class="eyebrow">Status do pagamento</div><b style="color:#0f3665">${esc(paymentLabel)}</b><div class="eyebrow" style="margin-top:18px">${esc(totalLabel)}</div><b style="font-size:28px;color:#0f3665">${esc(paymentAmountText)}</b></section>${driverCard}${logisticsBlock}${mapBlock}${nextCard}`;
+  if(t.customerPickupAtCenter===true){
+    const available=t.status==='AVAILABLE_FOR_CUSTOMER_PICKUP';
+    const confirmed=t.customerPickupStatus==='CONFIRMED'||t.status==='DELIVERED';
+    const center=t.customerPickupMode==='STORE'?'Retirada na loja':[t.finalLogisticsCenterName,t.finalLogisticsCenterAddress,t.finalLogisticsCenterCity,t.finalLogisticsCenterState].filter(Boolean).join(' • ');
+    const pickup=document.createElement('section');pickup.className='card';pickup.style.marginTop='14px';
+    pickup.innerHTML='<div class="eyebrow">Retirada no centro logístico</div><div class="status">'+(confirmed?'Retirada confirmada':available?'Disponível para retirada':'Aguardando chegada ao centro')+'</div><p>'+esc(center)+'</p>'+(available?'<button id="confirmCustomerPickup" style="width:100%;background:#0f3665;color:#fff;padding:15px;border:0;border-radius:12px;font-weight:800">Escanear código de coleta</button><p style="font-size:12px;color:#667">Confirme apenas depois de receber a encomenda fisicamente.</p>':'');
+    document.getElementById('content').appendChild(pickup);
+    if(available&&!t.homeDeliveryRequestedAt){
+      const request=document.createElement('button');request.textContent='Prefiro receber em casa â€” consultar frete';request.style.cssText='display:block;width:100%;margin-top:10px;padding:14px;border:1px solid #0f3665;background:#fff;color:#0f3665;border-radius:12px;font-weight:800';
+      request.onclick=()=>{if(window.confirm('Solicitar entrega no endereÃ§o cadastrado? O frete serÃ¡ por sua conta, mas a corrida sÃ³ serÃ¡ contratada apÃ³s confirmaÃ§Ã£o do valor.')){request.disabled=true;send('REQUEST_HOME_DELIVERY')}};
+      pickup.appendChild(request);
+    }
+    if(t.homeDeliveryRequestedAt){const tip=document.createElement('p');tip.className='sub';tip.textContent='Entrega domiciliar solicitada. A loja informarÃ¡ o frete para aprovaÃ§Ã£o antes de chamar o entregador.';pickup.appendChild(tip);}
+    if(available){
+      const scanButton=document.getElementById('confirmCustomerPickup');
+      scanButton.insertAdjacentHTML('beforebegin','<button id="confirmPickupReceived" type="button" style="width:100%;background:#0f3665;color:white;padding:15px;border:0;border-radius:12px;font-weight:800;margin-bottom:10px">Já recebi minha encomenda</button>');
+      document.getElementById('confirmPickupReceived').onclick=()=>{
+        if(!window.confirm('Você já recebeu a encomenda fisicamente? Confirmar encerra esta retirada.'))return;
+        document.getElementById('confirmPickupReceived').disabled=true;
+        send('CONFIRM_CUSTOMER_PICKUP',{code:''});
+      };
+      scanButton.onclick=async()=>{
+      const button=document.getElementById('confirmCustomerPickup');
+      if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){alert('Abra o rastreamento em HTTPS no navegador para usar a câmera.');return;}
+      if(!('BarcodeDetector' in window)){alert('Este navegador não oferece leitura de código de barras. Abra o link no Chrome atualizado do celular.');return;}
+      let stream;
+      const overlay=document.createElement('div');overlay.style.cssText='position:fixed;inset:0;background:#0b1420ed;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;color:#fff';
+      overlay.innerHTML='<h2 style="color:white">Escanear código de coleta</h2><video autoplay playsinline muted style="width:100%;max-width:440px;border:2px solid white;border-radius:12px"></video><p>Aponte para o código de barras da etiqueta.</p><button type="button" style="padding:12px 25px;border-radius:10px">Cancelar</button>';
+      document.body.appendChild(overlay);
+      let stopped=false;const stop=()=>{stopped=true;stream?.getTracks().forEach(track=>track.stop());overlay.remove()};
+      overlay.querySelector('button').onclick=stop;
+      try{
+        const detector=new BarcodeDetector({formats:['code_128']});
+        stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}});
+        const video=overlay.querySelector('video');video.srcObject=stream;await video.play();
+        const scan=async()=>{if(stopped)return;try{const codes=await detector.detect(video);if(codes.length){const code=String(codes[0].rawValue||'').trim();stop();if(window.confirm('Confirmar retirada desta encomenda após leitura da etiqueta?'))send('CONFIRM_CUSTOMER_PICKUP',{code});return}}catch(e){}setTimeout(scan,250)};
+        scan();
+      }catch(e){stop();alert('Não foi possível abrir a câmera. Verifique a permissão do navegador.')}
+    };
+    }
+  }
+  if(t.trackingActive) renderMap(t.latitude,t.longitude);
+  else {map=null;marker=null;}
+}
+function renderMap(lat,lng){
+  if(!window.L||!Number.isFinite(Number(lat))||!Number.isFinite(Number(lng)))return;
+  const point=[Number(lat),Number(lng)];
+  if(!map){map=L.map('map',{zoomControl:true}).setView(point,15);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);marker=L.marker(point).addTo(map).bindPopup('Seu entregador');}
+  else {marker.setLatLng(point);map.panTo(point);}
+}
+function renderError(message){document.getElementById('content').innerHTML=`<div class="card empty">${esc(message||'Não foi possível localizar esta entrega.')}</div>`}
+window.addEventListener('message',e=>{const m=e.data||{};if(m.source!=='VELUM_TRACKING_PAGE')return;if(m.type==='DATA'&&m.tracking)render(m.tracking);if(m.type==='ERROR')renderError(m.message);if(m.type==='HOME_DELIVERY_REQUEST_RESULT'){alert(m.mensagem||'SolicitaÃ§Ã£o registrada.');if(!m.ok)send('REFRESH')}if(m.type==='CUSTOMER_PICKUP_CONFIRMATION'&&!m.ok){alert(m.mensagem||'Não foi possível confirmar.');send('REFRESH')}});
+let reportedTrackingHeight=0;
+function reportTrackingHeight(){
+ const app=document.querySelector('.app');
+ if(!app)return;
+ const height=Math.ceil(Math.max(app.scrollHeight,app.getBoundingClientRect().bottom,document.documentElement.scrollHeight))+16;
+ if(Math.abs(height-reportedTrackingHeight)>3){
+   reportedTrackingHeight=height;
+   send('FRAME_HEIGHT',{height});
+ }
+}
+if(window.ResizeObserver){
+ const trackingObserver=new ResizeObserver(()=>reportTrackingHeight());
+ trackingObserver.observe(document.querySelector('.app'));
+}
+window.addEventListener('resize',reportTrackingHeight);
+window.addEventListener('load',reportTrackingHeight);
+setTimeout(reportTrackingHeight,100);
+setTimeout(reportTrackingHeight,600);
+send('READY');
+setInterval(()=>send('REFRESH'),15000);
+</script>
+</body>
+</html>
