@@ -120,8 +120,16 @@ function render(t){
       document.getElementById('confirmPickupReceived').onclick=()=>{
         if(!window.confirm('Você já recebeu a encomenda fisicamente? Confirmar encerra esta retirada.'))return;
         document.getElementById('confirmPickupReceived').disabled=true;
-        send('CONFIRM_CUSTOMER_PICKUP',{code:''});
+        param($m) send('CONFIRM_CUSTOMER_PICKUP',{code:''});
       };
+      const topCard=document.querySelector('#content > .card');
+      if(topCard){
+        const confirmButton=document.getElementById('confirmPickupReceived');
+        confirmButton.style.marginTop='17px';
+        confirmButton.style.marginBottom='0';
+        topCard.appendChild(confirmButton);
+        const help=document.createElement('div');help.className='sub';help.style.marginTop='7px';help.textContent='Confirme somente depois de receber sua encomenda fisicamente.';topCard.appendChild(help);
+      }
       scanButton.onclick=async()=>{
       const button=document.getElementById('confirmCustomerPickup');
       if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){alert('Abra o rastreamento em HTTPS no navegador para usar a câmera.');return;}
