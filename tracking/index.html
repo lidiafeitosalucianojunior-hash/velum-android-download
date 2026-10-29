@@ -233,5 +233,24 @@ let directTrackingRefresh=async()=>{};
 send('READY');
 setInterval(()=>send('REFRESH'),15000);
 </script>
+<script>
+(function(){
+  function organizePickupActions(){
+    const scan=document.getElementById('confirmCustomerPickup');
+    if(scan)scan.remove();
+    const received=document.getElementById('confirmPickupReceived');
+    const top=document.querySelector('#content > .card');
+    const pickup=document.querySelector('#content > .card:last-child');
+    const request=[...document.querySelectorAll('#content button')].find(b=>b.textContent.includes('Prefiro receber em casa'));
+    if(request&&received&&top&&request.parentElement!==top){
+      request.textContent='Prefiro receber em casa — consultar frete';
+      received.insertAdjacentElement('afterend',request);
+    }
+  }
+  const observer=new MutationObserver(organizePickupActions);
+  observer.observe(document.getElementById('content'),{childList:true,subtree:true});
+  organizePickupActions();
+})();
+</script>
 </body>
 </html>
