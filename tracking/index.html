@@ -142,6 +142,14 @@ function render(t){
     };
     }
   }
+  // O destinatario pode confirmar mesmo quando o entregador esqueceu etapas.
+  if(!t.customerPickupAtCenter&&!t.customerPickupAtStore&&t.status!=='DELIVERED'&&t.status!=='CANCELLED'){
+    const card=document.createElement('section');card.className='card';
+    card.innerHTML='<div class="eyebrow">Confirmacao do destinatario</div><b style="display:block;color:#0f3665;margin:9px 0">Sua encomenda ja chegou?</b><p class="sub">Se voce ja recebeu fisicamente o pedido, confirme aqui mesmo que o entregador nao tenha concluido todas as etapas.</p><button type="button" id="confirmCustomerDelivery" style="display:block;width:100%;background:#0f3665;color:white;border:0;border-radius:12px;padding:15px;font-weight:800;margin-top:12px">Ja recebi minha encomenda</button>';
+    document.getElementById('content').appendChild(card);
+    const button=card.querySelector('#confirmCustomerDelivery');
+    button.onclick=()=>{if(!window.confirm('Voce confirma que recebeu fisicamente esta encomenda? Esta acao encerra o rastreamento.'))return;button.disabled=true;button.textContent='Confirmando recebimento...';send('CONFIRM_CUSTOMER_DELIVERY')};
+  }
   if(t.trackingActive) renderMap(t.latitude,t.longitude);
   else {map=null;marker=null;}
 }
@@ -152,7 +160,7 @@ function renderMap(lat,lng){
   else {marker.setLatLng(point);map.panTo(point);}
 }
 function renderError(message){document.getElementById('content').innerHTML=`<div class="card empty">${esc(message||'Não foi possível localizar esta entrega.')}</div>`}
-window.addEventListener('message',e=>{const m=e.data||{};if(m.source!=='VELUM_TRACKING_PAGE')return;if(m.type==='DATA'&&m.tracking)window.velumLastTracking=m.tracking;if(m.type==='DATA'&&m.tracking)render(m.tracking);if(m.type==='ERROR')renderError(m.message);if(m.type==='HOME_DELIVERY_REQUEST_RESULT'){alert(m.mensagem||'SolicitaÃ§Ã£o registrada.');if(!m.ok)send('REFRESH')}if(m.type==='CUSTOMER_PICKUP_CONFIRMATION'&&!m.ok){alert(m.mensagem||'Não foi possível confirmar.');send('REFRESH')}});
+window.addEventListener('message',e=>{const m=e.data||{};if(m.source!=='VELUM_TRACKING_PAGE')return;if(m.type==='DATA'&&m.tracking)window.velumLastTracking=m.tracking;if(m.type==='DATA'&&m.tracking)render(m.tracking);if(m.type==='ERROR')renderError(m.message);if(m.type==='HOME_DELIVERY_REQUEST_RESULT'){alert(m.mensagem||'SolicitaÃ§Ã£o registrada.');if(!m.ok)send('REFRESH')}if(m.type==='CUSTOMER_DELIVERY_CONFIRMATION'){alert(m.mensagem||(m.ok?'Recebimento confirmado.':'Nao foi possivel confirmar.'));if(!m.ok)send('REFRESH')}if(m.type==='CUSTOMER_PICKUP_CONFIRMATION'&&!m.ok){alert(m.mensagem||'Não foi possível confirmar.');send('REFRESH')}});
 let reportedTrackingHeight=0;
 function reportTrackingHeight(){
  const app=document.querySelector('.app');
