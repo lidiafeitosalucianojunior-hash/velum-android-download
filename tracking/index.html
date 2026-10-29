@@ -100,7 +100,7 @@ function render(t){
   const nextCard='<section class="card"><div class="eyebrow">Próxima etapa</div><b style="color:#0f3665;display:block;margin:8px 0">'+esc(nextTitle)+'</b><div class="sub">'+esc(nextDetail)+'</div></section>';
   const logisticsBlock='';
   const mapBlock=t.trackingActive?`<section class="card"><div class="map-head"><b>Localização do entregador</b><span class="live"${liveStyle}>${liveLabel}</span></div><div id="map"></div><div class="meta"><span>Última atualização: ${esc(formatTime(t.lastTrackingUpdate))}</span>${age>60000?'<span>O sinal pode estar temporariamente indisponível.</span>':''}</div></section>`:'';
-  document.getElementById('content').innerHTML=`<section class="card"><div class="eyebrow">Pedido ${esc(t.orderId||t.deliveryId)}</div><div class="status">${esc(copy[0])}</div><div class="sub">${esc(copy[1])}</div><div class="progress">${steps(t.status)}</div></section>${timeline(t)}<section class="card"><div class="eyebrow">Status do pagamento</div><b style="color:#0f3665">${esc(paymentLabel)}</b><div class="eyebrow" style="margin-top:18px">${esc(totalLabel)}</div><b style="font-size:28px;color:#0f3665">${esc(paymentAmountText)}</b></section>${driverCard}${logisticsBlock}${mapBlock}${nextCard}`;
+  document.getElementById('content').innerHTML=`<section class="card"><div style="font-size:15px;font-weight:800;color:#0f3665;margin-bottom:12px">${t.customerName?'Olá, '+esc(String(t.customerName).trim().split(/\s+/)[0])+'! 👋':'Olá! 👋'}</div><div class="eyebrow">Pedido ${esc(t.orderId||t.deliveryId)}</div><div class="status">${esc(copy[0])}</div><div class="sub">${esc(copy[1])}</div><div class="progress">${steps(t.status)}</div>${!t.customerPickupAtCenter&&!t.customerPickupAtStore&&t.status!=='DELIVERED'&&t.status!=='CANCELLED'?`<button type="button" id="confirmCustomerDelivery" style="display:block;width:100%;margin-top:17px;padding:14px;border:0;border-radius:12px;background:#0f3665;color:#fff;font-weight:800;font-size:13px">Já recebi minha encomenda</button><div class="sub" style="margin-top:7px">Confirme somente se recebeu o pacote fisicamente.</div>`:''}</section><section class="card"><div class="eyebrow">Endereço de entrega</div><div style="font-size:14px;line-height:1.5;font-weight:700;color:#0f3665;margin-top:8px">${esc(t.deliveryAddress||t.customerHomeAddress||'Endereço não informado')}</div><div class="sub" style="margin-top:4px">${esc([t.deliveryCity,t.deliveryState].filter(Boolean).join(' - '))}</div></section>${timeline(t)}<section class="card"><div class="eyebrow">Status do pagamento</div><b style="color:#0f3665">${esc(paymentLabel)}</b><div class="eyebrow" style="margin-top:18px">${esc(totalLabel)}</div><b style="font-size:28px;color:#0f3665">${esc(paymentAmountText)}</b></section>${driverCard}${logisticsBlock}${mapBlock}${nextCard}`;
   if(t.customerPickupAtCenter===true){
     const available=t.status==='AVAILABLE_FOR_CUSTOMER_PICKUP';
     const confirmed=t.customerPickupStatus==='CONFIRMED'||t.status==='DELIVERED';
@@ -142,14 +142,8 @@ function render(t){
     };
     }
   }
-  // O destinatario pode confirmar mesmo quando o entregador esqueceu etapas.
-  if(!t.customerPickupAtCenter&&!t.customerPickupAtStore&&t.status!=='DELIVERED'&&t.status!=='CANCELLED'){
-    const card=document.createElement('section');card.className='card';
-    card.innerHTML='<div class="eyebrow">Confirmacao do destinatario</div><b style="display:block;color:#0f3665;margin:9px 0">Sua encomenda ja chegou?</b><p class="sub">Se voce ja recebeu fisicamente o pedido, confirme aqui mesmo que o entregador nao tenha concluido todas as etapas.</p><button type="button" id="confirmCustomerDelivery" style="display:block;width:100%;background:#0f3665;color:white;border:0;border-radius:12px;padding:15px;font-weight:800;margin-top:12px">Ja recebi minha encomenda</button>';
-    document.getElementById('content').appendChild(card);
-    const button=card.querySelector('#confirmCustomerDelivery');
-    button.onclick=()=>{if(!window.confirm('Voce confirma que recebeu fisicamente esta encomenda? Esta acao encerra o rastreamento.'))return;button.disabled=true;button.textContent='Confirmando recebimento...';send('CONFIRM_CUSTOMER_DELIVERY')};
-  }
+  const confirmButton=document.getElementById('confirmCustomerDelivery');
+  if(confirmButton)confirmButton.onclick=()=>{if(!window.confirm('Você confirma que recebeu fisicamente esta encomenda? Esta ação encerra o rastreamento.'))return;confirmButton.disabled=true;confirmButton.textContent='Confirmando recebimento...';send('CONFIRM_CUSTOMER_DELIVERY')};
   if(t.trackingActive) renderMap(t.latitude,t.longitude);
   else {map=null;marker=null;}
 }
