@@ -375,11 +375,12 @@ byId('openBlingCustomers').onclick=()=>{
 };
 function search(){
  const value=byId('blingCustomerSearch').value.trim();
- if(value.length<2){byId('blingCustomerFeedback').textContent='Digite pelo menos 2 caracteres.';return}
+ if(value.length<2){byId('blingCustomerFeedback').textContent='Digite pelo menos 2 caracteres.';return} if(byId('blingSearchMode').value==='zip'&&!/^\d{5}-?\d{3}$/.test(value)){byId('blingCustomerFeedback').textContent='Informe um CEP com 8 d?gitos.';return}
  byId('blingCustomerFeedback').textContent='Consultando clientes no Bling...';
  if(byId('blingSearchMode').value==='order'){if(!/^\d{1,14}$/.test(value)){byId('blingCustomerFeedback').textContent='Informe o número do pedido (somente dígitos).';return;}send('FIND_BLING_ORDER',{number:value});return;}
  send('SEARCH_BLING_CUSTOMERS',{search:value});
 }
+byId('blingSearchMode').addEventListener('change',()=>{const mode=byId('blingSearchMode').value;byId('blingCustomerSearch').placeholder=({name:'Digite o nome do cliente',phone:'Digite o telefone com DDD',zip:'Digite o CEP (8 d?gitos)',order:'Digite o n?mero do pedido Bling'})[mode]||'Digite sua pesquisa';byId('blingCustomerSearch').value='';byId('blingCustomerFeedback').textContent='';});
 byId('blingCustomerSearchBtn').onclick=search;
 byId('bcCancel').onclick=()=>{byId('blingCustomerEditor').classList.remove('velum-editing');byId('blingCustomerEditor').style.display='none'};
 byId('bcSave').onclick=()=>{
