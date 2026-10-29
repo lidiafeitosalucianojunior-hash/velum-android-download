@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Painel LÚMEN</title>
+<style>
+:root{--navy:#0F3665;--orange:#FF7A00;--bg:#F5F7FA;--line:#E3E8EF;--text:#182B45;--muted:#748297;--green:#179B63;--red:#B94B4B}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,Arial,sans-serif;color:var(--text)}button,input,select,textarea{font:inherit}.app{max-width:720px;margin:auto;padding:16px 14px 90px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 14px}.brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:14px;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:900;font-size:24px}.brand h1{margin:0;font-size:18px;color:var(--navy)}.brand p{margin:2px 0 0;color:var(--muted);font-size:9px}.exit{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:12px;padding:10px 14px;font-weight:800}.hero{background:#EEF5FA;color:var(--text);border-radius:13px;padding:12px 14px;margin-bottom:14px;border:1px solid #E0E8F0}.hero small{color:var(--orange);font-weight:900;letter-spacing:.5px}.hero h2{font-size:18px;color:var(--navy);margin:4px 0 3px}.hero p{margin:0;color:var(--muted);font-size:10px}.quick{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;margin:14px 0 18px}.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:none}.call{border:0;background:var(--orange);color:#fff;text-align:left;cursor:pointer}.call b{font-size:15px;display:block}.call span{font-size:11px;opacity:.9}.stat small{display:block;font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase}.stat strong{display:block;font-size:22px;color:var(--navy);margin-top:8px}.callbox{display:none;margin:14px 0 20px}.callbox.on{display:block}.callbox h3{margin:0 0 5px;color:var(--navy)}.callbox p{margin:0 0 15px;color:var(--muted);font-size:11px}.grid{display:grid;grid-template-columns:2fr 1fr;gap:10px}.grid.three{grid-template-columns:1.5fr 1fr .6fr}.field{display:grid;gap:5px}.field.full{grid-column:1/-1}.field label{font-size:9px;font-weight:850;text-transform:uppercase;color:var(--muted)}.field input,.field select,.field textarea{border:1px solid #D8E1EB;border-radius:11px;padding:11px;background:#fff;color:var(--text);outline:none}.field textarea{min-height:72px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--orange)}.form-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}.btn{min-height:44px;border-radius:12px;border:0;font-weight:850;cursor:pointer}.btn.primary{background:var(--orange);color:#fff}.btn.secondary{background:#fff;border:1px solid var(--navy);color:var(--navy)}.btn:disabled{opacity:.55}.quote{display:none;margin-top:12px;padding:12px;border-radius:12px;background:#F7FAFD;border:1px solid var(--line);font-size:11px}.quote.on{display:flex;justify-content:space-between;align-items:center}.quote strong{font-size:19px;color:var(--navy)}.notice{display:none;margin-top:10px;padding:10px 12px;border-radius:10px;font-size:11px}.notice.on{display:block}.notice.ok{background:#EAF8F2;color:#176A49}.notice.err{background:#FFF0F0;color:var(--red)}.tabs{display:flex;gap:8px;margin:20px 0 12px}.tab{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:12px;padding:11px 16px;font-weight:850;cursor:pointer}.tab.on{background:var(--navy);color:#fff;border-color:var(--navy)}.panel{display:none}.panel.on{display:block}.section-head{display:flex;justify-content:space-between;align-items:center;margin:8px 0 12px}.section-head h3{margin:0;font-size:20px}.section-head span{font-size:11px;color:var(--muted)}.ride{margin-bottom:12px}.status{display:inline-block;background:#FFF0E3;color:#B75A00;border-radius:999px;padding:6px 9px;font-size:9px;font-weight:900;text-transform:uppercase}.ride h4{font-size:16px;margin:10px 0 8px;color:var(--navy)}.meta{font-size:11px;line-height:1.65;color:#53647A}.meta b{color:var(--text)}.driver{margin-top:10px;padding:10px;border-radius:12px;background:#F7FAFD;display:flex;gap:10px;align-items:center}.driver img{width:42px;height:42px;border-radius:50%;object-fit:cover}.driver .ph{width:42px;height:42px;border-radius:50%;background:#EAF0F6;display:grid;place-items:center;color:var(--navy);font-weight:900}.empty{padding:28px;text-align:center;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:16px}.loading{padding:28px;text-align:center;color:var(--muted)}@media(max-width:650px){.app{padding:16px 12px 86px}.quick{grid-template-columns:1fr 1fr}.call{grid-column:1/-1}.hero{padding:20px}.hero h2{font-size:24px}.brand h1{font-size:20px}.grid,.grid.three,.form-actions{grid-template-columns:1fr}.field.full{grid-column:auto}}
+
+.address-block{border:1px solid var(--line);border-radius:16px;padding:14px;background:#FBFCFE;margin:12px 0}.address-block h4{margin:0 0 4px;color:var(--navy);font-size:14px}.address-block p{margin:0 0 12px;color:var(--muted);font-size:10px;line-height:1.5}.suggestions{position:absolute;left:0;right:0;top:70px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 30px #173d6a22;z-index:40;display:none;overflow:hidden}.suggestions.on{display:block}.suggestion{padding:11px 12px;border-bottom:1px solid #edf1f5;font-size:10px;color:var(--text);cursor:pointer}.suggestion:last-child{border-bottom:0}.stop-list{display:grid;gap:10px;margin-top:10px}.stop{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}.stop-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.stop-head b{color:var(--navy);font-size:11px}.stop-remove{border:0;background:#FFF0F0;color:#A54040;border-radius:8px;padding:6px 8px;font-size:9px;font-weight:850}.stop-fee{display:flex;gap:8px;align-items:center;margin-top:9px;font-size:10px;color:var(--muted)}.stop-fee input[type=number]{max-width:130px}.add-stop{width:100%;margin-top:10px;border:1px dashed #AEBED0;background:#fff;color:var(--navy);border-radius:11px;padding:11px;font-size:10px;font-weight:900}.review{display:none;margin-top:16px}.review.on{display:block}.route-box{display:grid;gap:9px}.route-point{padding:12px;border-radius:12px;background:#F7FAFD;border:1px solid var(--line)}.route-point small{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;font-weight:850}.route-point b{display:block;color:var(--navy);font-size:12px;margin-top:3px}.review-price{display:flex;justify-content:space-between;align-items:center;padding:14px;border-radius:13px;background:#FFF7EC;border:1px solid #FFD3A4;margin-top:12px}.review-price strong{font-size:22px;color:var(--navy)}.review-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.ready-check{display:flex;gap:9px;align-items:flex-start;margin:13px 0;font-size:10px;font-weight:800;color:#30465D}.ready-check input{width:19px;height:19px;accent-color:var(--orange)}.logistics-actions{display:grid;gap:7px;margin-top:10px}.logistics-actions .btn{width:100%}.timeline{margin-top:10px;padding:10px;border-radius:12px;background:#F7FAFD;border:1px solid var(--line)}.timeline-row{display:grid;grid-template-columns:22px 1fr;gap:8px;padding:5px 0}.timeline-dot{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#E9EFF5;color:var(--navy);font-size:8px;font-weight:900}.timeline-row.done .timeline-dot{background:#EAF8F2;color:#13704A}.share{margin-top:8px;width:100%}.waiting-actions{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px;margin-top:10px}.waiting-actions .btn{width:100%}.btn.danger{background:#fff;border:1px solid #C45B5B;color:#A53E3E}.btn.recall{background:var(--orange);color:#fff}
+@media(max-width:650px){.waiting-actions{grid-template-columns:1fr}.address-block{padding:12px}.review-actions{grid-template-columns:1fr}.quick{grid-template-columns:1fr 1fr}.call{grid-column:1/-1}}
+
+
+.active-subtabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 14px}.active-subtab{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:12px;padding:11px 8px;font-size:10px;font-weight:900;cursor:pointer}.active-subtab.on{background:var(--navy);color:#fff;border-color:var(--navy)}.print-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0 12px;padding:10px 12px;border:1px solid var(--line);background:#fff;border-radius:13px}.print-toolbar span{font-size:10px;color:var(--muted)}.print-selected{display:flex;align-items:center;gap:7px;border:0;background:var(--navy);color:#fff;border-radius:10px;padding:9px 11px;font-size:9px;font-weight:900;cursor:pointer}.print-selected:disabled{opacity:.45}.ride-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.ride-select{display:flex;align-items:center;gap:7px;font-size:9px;color:var(--muted);font-weight:800}.ride-select input{width:18px;height:18px;accent-color:var(--orange)}.print-one{width:38px;height:38px;border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:10px;display:grid;place-items:center;cursor:pointer}.print-one svg,.print-selected svg{width:18px;height:18px;display:block}.ride-title-line{display:flex;align-items:center;justify-content:space-between;gap:8px}.ride-title-line h4{margin:10px 0 8px}.selection-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.select-visible{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:9px;padding:8px 10px;font-size:9px;font-weight:850;cursor:pointer}
+@media(max-width:650px){.active-subtabs{grid-template-columns:1fr}.print-toolbar{align-items:stretch;flex-direction:column}.selection-actions{justify-content:space-between}.print-selected{justify-content:center}}
+
+
+.driver-picker{margin-top:10px;border:1px solid var(--line);border-radius:14px;background:#F7FAFD;overflow:hidden}.driver-picker-toggle{width:100%;border:0;background:#F7FAFD;color:var(--navy);padding:12px;display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:900;cursor:pointer}.driver-picker-body{display:none;padding:0 10px 10px}.driver-picker.open .driver-picker-body{display:block}.driver-choice{display:flex;align-items:center;gap:9px;padding:9px;background:#fff;border:1px solid var(--line);border-radius:11px;margin-top:7px;cursor:pointer}.driver-choice input{width:18px;height:18px;accent-color:var(--orange)}.driver-choice-photo{width:36px;height:36px;border-radius:50%;background:#E9EFF5;display:grid;place-items:center;overflow:hidden;color:var(--navy);font-weight:900;flex:none}.driver-choice-photo img{width:100%;height:100%;object-fit:cover}.driver-choice-copy{min-width:0;flex:1}.driver-choice-copy b{display:block;color:var(--navy);font-size:10px}.driver-choice-copy span{display:block;color:var(--muted);font-size:8px;margin-top:2px}.online-dot{width:8px;height:8px;border-radius:50%;background:#B5C0CC}.online-dot.on{background:#20A864}.driver-picker-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.driver-picker-note{font-size:8px;line-height:1.4;color:var(--muted);padding:7px 2px 0}
+
+</style><style>.tracking-main{background:#fff;border:1px solid #dce4ee;border-radius:18px;padding:18px;margin-top:20px}.tracking-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin-bottom:16px}.tracking-tab{cursor:pointer;border:1px solid #dce4ee;border-radius:11px;background:#f1f5fa;color:#17365b;padding:13px 8px;font-weight:800;font-size:13px}.tracking-tab.on{background:#173c72;border-color:#173c72;color:white}.tracking-main .panel{border:0;padding:0;box-shadow:none}@media(max-width:750px){.tracking-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.tracking-main{padding:12px}} </style><style> .tracking-tabs{grid-template-columns:repeat(5,minmax(0,1fr))}.tracking-tab{display:flex!important;align-items:center;justify-content:center;gap:12px;position:relative;min-height:62px;padding:13px 52px 13px 16px!important;text-align:center}.velum-counter{position:absolute;right:15px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#dbe4ee;color:#17365b;font-weight:900;flex:none}.tracking-tab.on .velum-counter{background:#ffffff33;color:#fff}@media(max-width:750px){.tracking-tabs{grid-template-columns:1fr!important}.tracking-tab{min-height:72px!important;width:100%!important;border-radius:14px!important}} </style><style id="velum-lumen-chronological-layout">
+.quick{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important;width:100%}
+.quick>.card,.quick>button{display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:flex-start!important;width:100%!important;max-width:none!important;min-width:0!important;min-height:96px!important}
+.tracking-main{width:100%}
+.tracking-tabs{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important;width:100%}
+.tracking-tabs>.tracking-tab{position:relative!important;display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-width:0!important;min-height:72px!important;padding:18px 66px 18px 20px!important;text-align:center!important;line-height:1.4!important;white-space:normal!important;overflow-wrap:break-word!important;font-size:clamp(13px,1.3vw,17px)!important}
+.tracking-tabs>.tracking-tab>.velum-counter{position:absolute!important;right:16px!important;top:50%!important;transform:translateY(-50%)!important;display:grid!important;place-items:center!important;flex:none!important}
+</style><style id="velum-lumen-prototype-20261028">
+:root{--navy:#101b35;--orange:#ff5b13;--bg:#f7f8fb;--line:#e3e7ee;--text:#101b35;--muted:#788399}
+body{background:#f7f8fb;color:#101b35}.app{max-width:1480px!important;margin:auto;padding:28px 32px 90px!important}.top{padding:8px 0 22px}.brand h1{font-size:25px;letter-spacing:2px;color:#101b35}.logo{background:#ff5b13}.card,.tracking-main,#blingCustomerPanel{background:#fff;border:1px solid #e5e8ee;border-radius:17px;box-shadow:0 5px 22px #15233a08}
+.quick{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}.quick>.card{min-height:100px!important;padding:22px!important;border-radius:14px!important}.quick>.call:first-child{background:#ff5b13;color:#fff;border:0}.quick>.call:not(:first-child){background:#fff;color:#101b35}.quick>.call:not(:first-child) span{color:#788399}
+.tracking-tabs{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:8px!important}.tracking-tab{min-height:65px!important;background:#f1f4f8;color:#253651;border-radius:12px}.tracking-tab.on{background:#ff5b13;color:#fff;border-color:#ff5b13}.tracking-main{padding:24px}.btn.primary,.print-selected{background:#ff5b13}.field input,.field select,.field textarea,#pickupBox input,#pickupBox textarea{width:100%;min-width:0;border:1px solid #dce2ea;border-radius:10px;padding:12px}#pickupBox label{display:block;margin:10px 0;font-weight:700;font-size:13px}#blingCustomerSection{margin:12px 0 20px!important}#openBlingCustomers{background:#fff!important;color:#101b35!important;border:1px solid #e5e8ee!important;box-shadow:0 5px 22px #15233a08!important}
+@media(max-width:900px){.app{padding:16px!important}.quick{grid-template-columns:repeat(2,minmax(0,1fr))!important}.tracking-tabs{grid-template-columns:repeat(2,minmax(0,1fr))!important}}@media(max-width:550px){.quick,.tracking-tabs{grid-template-columns:1fr!important}.tracking-main{padding:14px!important}.app{padding:12px!important}}
+.velum-sidebar{position:fixed;inset:0 auto 0 0;width:280px;padding:26px 14px;background:#fff9f5;border-right:1px solid #eee7e1;z-index:20;display:flex;flex-direction:column;gap:7px}.sidebar-brand{display:flex;align-items:center;gap:12px;margin:0 6px 25px}.sidebar-mark{display:grid;place-items:center;background:#ff5b13;color:white;width:46px;height:46px;border-radius:12px;font-size:26px;font-weight:900}.sidebar-brand strong{display:block;font-size:25px;letter-spacing:3px}.sidebar-brand small{display:block;font-size:10px;color:#657085}.velum-sidebar button{border:0;background:transparent;text-align:left;padding:16px 18px;border-radius:12px;color:#15233c;cursor:pointer;font-weight:650}.velum-sidebar button:hover,.velum-sidebar button:first-of-type{background:#ffe6d7;color:#f65312}body>.app{margin-left:280px!important;max-width:none!important}.top .brand{display:none}@media(max-width:950px){.velum-sidebar{position:static;width:auto;flex-direction:row;flex-wrap:wrap;padding:10px}.sidebar-brand{width:100%;margin:0}.velum-sidebar button{padding:9px 11px;font-size:12px}body>.app{margin-left:0!important}}
+</style><style id="velum-lumen-clean-20261028">#blingCustomerEditor:not(.velum-editing){display:none!important}#blingCustomerEditor.velum-editing{display:block!important}#blingCustomerSection{margin:0 0 20px!important}#openBlingCustomers{width:100%!important;display:flex!important;align-items:center!important;gap:16px!important;border-radius:16px!important;padding:18px 22px!important}#openBlingCustomers strong{font-size:17px!important}#openBlingCustomers small{font-size:12px!important;line-height:1.5!important}#blingCustomerPanel{padding:22px!important;overflow:hidden!important}#blingCustomerPanel input,#blingCustomerPanel select{max-width:100%;min-width:0;box-sizing:border-box;border:1px solid #dce4ee;border-radius:10px;background:#fff;padding:11px}#blingCustomerPanel button{border-radius:10px;min-height:42px;padding:10px 15px}#blingCustomerEditor{padding:18px!important;border-radius:14px!important;margin-top:18px!important}#blingCustomerEditor label{display:block;font-size:12px;font-weight:750;color:#34435c;margin-top:10px}#blingCustomerEditor input{width:100%!important;display:block!important;margin-top:5px}#blingCustomerEditor .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}.tracking-tab{position:relative!important;padding-right:58px!important;min-height:64px!important;text-align:left!important;justify-content:flex-start!important}.tracking-tab .velum-counter{position:absolute!important;right:13px!important;top:50%!important;transform:translateY(-50%)!important;width:32px!important;height:32px!important;border-radius:50%!important;display:grid!important;place-items:center!important}@media(max-width:650px){.app{padding:14px!important}#blingCustomerPanel{padding:16px!important}#blingCustomerEditor .grid{grid-template-columns:1fr!important}.tracking-tabs{grid-template-columns:1fr!important}.tracking-tab{width:100%!important}.quick{gap:10px!important}}</style></head>
+<body><nav class="velum-sidebar" aria-label="Navegação Lúmen"><div class="sidebar-brand"><span class="sidebar-mark">V</span><span><strong>VELUM</strong><small>Administrativo LÚMEN LUXOS</small></span></div><button type="button" data-panel-target="home">⌂ &nbsp; Início</button><button type="button" data-panel-target="bling">▣ &nbsp; Pedidos</button><button type="button" data-panel-target="bling">♙ &nbsp; Clientes (Bling)</button><button type="button" data-panel-target="tracking">▤ &nbsp; Entregas</button><button type="button" data-panel-target="call">＋ &nbsp; Chamar entregador</button><button type="button" data-panel-target="pickup">▦ &nbsp; Criar retirada</button><button type="button" data-panel-target="tracking">◇ &nbsp; Etiquetas</button></nav><div class="app">
+<header class="velum-page-heading"><h1>Administrativo</h1><p>Gerencie pedidos, entregas e clientes de forma rápida e prática.</p></header><div class="top"><div class="brand"><div class="logo">V</div><div><h1>VELUM</h1><p>Administrativo LÚMEN LUXOS</p></div></div><button id="logout" class="exit">Sair</button></div>
+
+<section id="blingCustomerSection" style="margin:0 0 14px">
+<button type="button" id="openBlingCustomers" style="width:100%;border:0;border-radius:17px;background:#102f59;color:white;text-align:left;padding:22px 24px;display:flex;justify-content:space-between;align-items:center;min-height:94px;cursor:pointer"><span><strong style="display:block;font-size:20px">Cliente/Pedido</strong><small style="display:block;margin-top:5px">Consultar clientes e pedidos do Bling</small></span><span aria-hidden="true">›</span></button>
+<div id="blingCustomerPanel" style="display:block;background:#fff;border:1px solid #dce4ee;border-radius:17px;padding:18px;margin:12px 0">
+<h3 style="margin:0 0 9px">Clientes do Bling</h3><p style="color:#68788a;font-size:13px">Consulte por nome, telefone, CPF ou número do pedido Bling. A etiqueta é gerada após revisar o endereço e o valor da entrega.</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><select id="blingSearchMode" aria-label="Tipo de pesquisa" style="border:1px solid #dce4ee;border-radius:10px;padding:12px;background:#fff"><option value="customer">Nome, telefone ou CPF</option><option value="order">Número do pedido</option></select><input id="blingCustomerSearch" autocomplete="off" style="flex:1;min-width:170px;border:1px solid #dce4ee;border-radius:10px;padding:13px" placeholder="Nome, telefone, CPF ou número do pedido"><button type="button" id="blingCustomerSearchBtn" style="background:#ff7a00;color:#fff;border:0;border-radius:10px;padding:12px 18px;font-weight:800">Pesquisar</button></div>
+<p id="blingCustomerFeedback" aria-live="polite" style="font-size:12px;color:#60728a"></p><label style="display:flex;gap:8px;align-items:center;margin:12px 0;font-size:13px;color:#284160"><input type="checkbox" id="blingHideIncomplete"> Ocultar duplicados incompletos desta pesquisa</label><div id="blingCustomerEditor" style="display:none;background:#f7f9fc;border:1px solid #dce4ee;padding:16px;border-radius:14px;margin:12px 0">
+<h3>Editar cadastro no Bling</h3><p style="font-size:12px;color:#63738a">As alterações serão salvas no contato original. Confirme os dados antes de salvar.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:9px">
+<label>Nome<input id="bcName" style="width:100%;padding:10px"></label><label>Telefone<input id="bcPhone" style="width:100%;padding:10px"></label>
+<label>Rua<input id="bcStreet" style="width:100%;padding:10px"></label><label>Número<input id="bcNumber" style="width:100%;padding:10px"></label>
+<label>Bairro<input id="bcNeighborhood" style="width:100%;padding:10px"></label><label>Complemento<input id="bcComplement" style="width:100%;padding:10px"></label>
+<label>Cidade<input id="bcCity" style="width:100%;padding:10px"></label><label>UF<input id="bcState" maxlength="2" style="width:100%;padding:10px"></label>
+<label>CEP<input id="bcZip" style="width:100%;padding:10px"></label></div>
+<div style="display:flex;gap:8px;margin-top:12px"><button type="button" id="bcSave" style="border:0;background:#14355e;color:white;border-radius:10px;padding:13px;font-weight:800">Salvar alterações no Bling</button><button type="button" id="bcCancel" style="padding:13px;border-radius:10px">Cancelar</button></div>
+<p id="bcFeedback" aria-live="polite"></p></div><div id="blingCustomerResults" style="display:grid;gap:9px"></div></div></section>
+<section class="quick"><button class="card call" id="call"><b>Chamar entregador</b><span>Criar uma nova corrida</span></button><button class="card call" id="createPickupOpen" style="background:#153861"><b>Criar retirada</b><span>Gerar etiqueta com QR Code</span></button></section>
+
+<section id="pickupBox" class="card" style="display:none;margin:15px 0;padding:20px;border-radius:17px"><h3>Criar retirada</h3><p>Gere a etiqueta para retirada presencial. O comprador receberá um comprovante após identificação pelo QR Code.</p><label>Nome do comprador<input id="pickupBuyer" placeholder="Nome completo" autocomplete="off"></label><label>WhatsApp do comprador<input id="pickupBuyerPhone" inputmode="tel" placeholder="DDD + telefone"></label><label>Observações<textarea id="pickupNotes" rows="3" placeholder="Informações adicionais"></textarea></label><button id="pickupCreate" class="card call" style="padding:12px;width:100%;margin-top:12px">GERAR RETIRADA E ETIQUETA</button><div id="pickupResult" style="margin-top:12px"></div></section><section class="card callbox" id="callBox">
+<h3>Chamar entregador</h3><p>Monte o trajeto em etapas. O endereço da LÚMEN vem preenchido por padrão e continua editável.</p>
+
+<div class="address-block"><h4>1. Endereço de retirada</h4><p>Endereço padrão LÚMEN • WhatsApp 88 98861-5993</p>
+<div class="grid"><div class="field"><label>Rua</label><input id="pickupAddress"></div><div class="field"><label>Número</label><input id="pickupNumber"></div></div>
+<div class="grid three"><div class="field"><label>Bairro</label><input id="pickupNeighborhood"></div><div class="field"><label>Cidade</label><input id="pickupCity"></div><div class="field"><label>UF</label><input id="pickupState" maxlength="2"></div></div>
+<div class="grid"><div class="field"><label>CEP</label><input id="pickupZipCode"></div><div class="field"><label>WhatsApp</label><input id="pickupPhone" value="88 98861-5993"></div></div></div>
+
+<div class="address-block"><h4>2. Endereço de entrega</h4><p>Digite rua e número. A VELUM mostra sugestões de endereços existentes.</p>
+<div class="field" style="position:relative"><label>Rua, número e bairro</label><input id="deliveryAddress" autocomplete="off" placeholder="Ex.: Rua Santa Cecília, 515"><div id="deliverySuggestions" class="suggestions"></div></div>
+<div class="grid three"><div class="field"><label>CEP</label><input id="deliveryZipCode"></div><div class="field"><label>Cidade</label><input id="deliveryCity"></div><div class="field"><label>UF</label><input id="deliveryState" maxlength="2"></div></div></div>
+
+<div class="address-block"><h4>3. Recebedor</h4>
+<div class="grid"><div class="field"><label>Nome do recebedor</label><input id="customerName"></div><div class="field"><label>WhatsApp / telefone</label><input id="customerPhone"></div></div>
+<div class="field full"><label>Instruções / ponto de referência</label><textarea id="instructions"></textarea></div>
+<div class="field"><label>Quem paga</label><select id="payer"><option value="">Selecione quem paga</option><option value="PAY_AT_PICKUP">LÚMEN</option><option value="PAY_AT_DELIVERY">Recebedor</option></select></div></div>
+
+<button id="addStop" class="add-stop" type="button" style="width:100%;margin:12px 0">+ ADICIONAR PARADA</button><div class="address-block" id="logisticsStopCard" style="display:none"><h4>4. Paradas / centros de distribuição</h4><p>Opcional. Adicione uma ou mais paradas antes de chamar o entregador. Cada parada pode ter taxa extra ou não.</p>
+<label style="display:flex;align-items:center;gap:10px;margin:14px 0;padding:14px;border:1px solid #dce4ee;border-radius:12px"><input type="checkbox" id="customerPickupAtCenter"> <span><b>Cliente retira no centro logístico</b><small style="display:block">Frete até o último centro; endereço da cliente permanece na etiqueta.</small></span></label><label style="display:block;padding:12px">Taxa adicional opcional (R$)<input type="number" id="customerPickupExtraFee" min="0" step="0.01" value="0" style="width:120px;margin-left:12px;padding:8px;border:1px solid #dce4ee;border-radius:8px"></label><div id="stopList" class="stop-list"></div></div>
+
+<div id="notice" class="notice"></div>
+<div class="form-actions"><button id="calc" class="btn primary">CALCULAR ENTREGA</button></div>
+
+<div id="review" class="review">
+<div class="route-box" id="routeBox"></div>
+<div class="review-price"><span>Valor cobrado da cliente</span><strong id="quoteValue">R$ 0,00</strong></div>
+<div id="extraFeeText" class="meta" style="margin-top:7px"></div>
+<div class="review-actions"><button id="editRoute" class="btn secondary" type="button">EDITAR</button><button id="cancelRoute" class="btn secondary" type="button">CANCELAR</button></div>
+<label class="ready-check"><input id="readyConfirm" type="checkbox"><span>Confirmo que a corrida está pronta para iniciar o processo.</span></label>
+<button id="create" class="btn primary" style="width:100%" disabled>GERAR ETIQUETA</button>
+</div></section>
+
+<section class="tracking-main"><h2>Acompanhar entregas</h2><div class="tracking-tabs"><button type="button" class="tracking-tab" data-view="waiting">Procurando entregador</button><button type="button" class="tracking-tab" data-view="accepted">Corrida aceita</button><button type="button" class="tracking-tab" data-view="pickup">Aguardando retirada</button><button type="button" class="tracking-tab on" data-view="logistics">A caminho do centro logístico</button><button type="button" class="tracking-tab" data-view="done">Concluída</button></div><div style="display:none"><span id="activeCount">0</span><span id="doneCount">0</span></div>
+<section class="panel on" id="activePanel">
+  <div style="display:none" id="activeSummary"></div>
+<div style="display:none"><span id="logisticsCount">0</span><span id="acceptedCount">0</span><span id="waitingCount">0</span></div>
+  <div class="print-toolbar"><span id="selectedInfo">Nenhuma etiqueta selecionada</span><div class="selection-actions"><button class="select-visible" id="selectVisible" type="button">SELECIONAR VISÍVEIS</button><button class="print-selected" id="printSelected" type="button" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 3h10v4H7V3Zm10 14v4H7v-4h10Zm2-9a3 3 0 0 1 3 3v5h-4v-2H6v2H2v-5a3 3 0 0 1 3-3h14Zm-2 4h2v-2h-2v2Z"/></svg> IMPRIMIR SELECIONADAS</button></div></div>
+  <div id="activeList" class="loading">Carregando...</div>
+</section>
+<section class="panel" id="donePanel">
+  <div class="section-head"><h3>Corridas concluídas</h3><span>Histórico LÚMEN</span></div>
+  <div class="print-toolbar"><span>Selecione uma ou mais etiquetas para imprimir em lote.</span><button class="print-selected" id="printSelectedDone" type="button" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 3h10v4H7V3Zm10 14v4H7v-4h10Zm2-9a3 3 0 0 1 3 3v5h-4v-2H6v2H2v-5a3 3 0 0 1 3-3h14Zm-2 4h2v-2h-2v2Z"/></svg> IMPRIMIR SELECIONADAS</button></div>
+  <div id="doneList" class="loading">Carregando...</div>
+</section>
+</section>
+</section>
+</div>
+<script>
+
+const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])),money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+let currentFee=0,stops=[],suggestTimer=null,activeRideTab='logistics',activeRides=[],doneRides=[],selectedLabels=new Set(),editingDeliveryId='',availableDrivers=[];
+
+function send(type,payload={}){parent.postMessage({source:'LUMEN_ADMIN_PANEL',type,payload},'*')}
+function dt(v){if(!v)return'—';try{return new Date(v).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}catch(_){return'—'}}
+function statusLabel(s){return({READY_TO_DISPATCH:'Etiqueta pronta',PREPARING:'Preparando',LOGISTICS_PACKED:'Conferido e embalado',LOGISTICS_IN_TRANSIT:'A caminho do centro',AT_LOGISTICS_CENTER:'No centro de distribuição',AVAILABLE_FOR_CUSTOMER_PICKUP:'Disponível para retirada',LOGISTICS_READY_FOR_DRIVER:'Último centro confirmado',WAITING_DRIVER:'Aguardando entregador',DRIVER_ACCEPTED:'Entrega aceita',GOING_TO_STORE:'Indo para a retirada',AT_STORE:'Na retirada',COLLECTED:'Pedido coletado',OUT_FOR_DELIVERY:'Saiu para entrega',DELIVERED:'Concluída'})[s]||s||'Corrida'}
+function notice(msg,ok=false){$('notice').textContent=msg;$('notice').className='notice on '+(ok?'ok':'err')}
+function clearNotice(){$('notice').className='notice';$('notice').textContent=''}
+
+function driverHtml(d){if(!d)return'';const photo=d.photoData?'<img src="'+esc(d.photoData)+'">':'<div class="ph">'+esc((d.name||'E').slice(0,1))+'</div>';return'<div class="driver">'+photo+'<div><b>'+esc(d.name||'Entregador')+'</b><div class="meta">'+esc([d.vehicleType,d.plate,d.phone].filter(Boolean).join(' • '))+'</div></div></div>'}
+function timeline(x){if(!x.internalLogistics)return'';const stages=Array.isArray(x.logisticsStages)?x.logisticsStages:[];let rows='<div class="timeline-row '+(['LOGISTICS_PACKED','LOGISTICS_IN_TRANSIT','AT_LOGISTICS_CENTER','AVAILABLE_FOR_CUSTOMER_PICKUP','LOGISTICS_READY_FOR_DRIVER','WAITING_DRIVER','DRIVER_ACCEPTED','GOING_TO_STORE','AT_STORE','COLLECTED','OUT_FOR_DELIVERY','DELIVERED'].includes(x.status)?'done':'')+'"><div class="timeline-dot">1</div><div><b>Produto conferido e embalado</b></div></div>';stages.forEach((st,i)=>{const done=st.status==='ARRIVED';rows+='<div class="timeline-row '+(done?'done':'')+'"><div class="timeline-dot">'+(i+2)+'</div><div><b>'+esc(st.name||('Centro '+(i+1)))+'</b><div class="meta">'+esc(st.address||'')+(st.hasFee?' • taxa '+money(st.fee):' • sem taxa extra')+'</div></div></div>'});return'<div class="timeline">'+rows+'</div>'}
+function logisticsButtons(x){if(!x.internalLogistics)return'';let b='';if(x.status==='PREPARING')b='<button class="btn primary log-act" data-id="'+esc(x.deliveryId)+'" data-action="MARK_PACKED">PRODUTO CONFERIDO E EMBALADO</button>';else if(['LOGISTICS_PACKED','AT_LOGISTICS_CENTER'].includes(x.status))b='<button class="btn primary log-act" data-id="'+esc(x.deliveryId)+'" data-action="SEND_TO_CENTER">A CAMINHO DO PRÓXIMO CENTRO</button>';else if(x.status==='LOGISTICS_IN_TRANSIT')b='<button class="btn primary log-act" data-id="'+esc(x.deliveryId)+'" data-action="ARRIVE_CENTER">CHEGOU AO CENTRO DE DISTRIBUIÇÃO</button>';else if(x.status==='LOGISTICS_READY_FOR_DRIVER')b='<button class="btn primary log-act" data-id="'+esc(x.deliveryId)+'" data-action="CALL_DRIVER">CHAMAR ENTREGADOR</button>';return b?'<div class="logistics-actions">'+b+'</div>':''}
+function driverPicker(x){
+ if(!['READY_TO_DISPATCH','WAITING_DRIVER'].includes(x.status))return'';
+ const selected=new Set((Array.isArray(x.selectedDriverIds)?x.selectedDriverIds:[]).map(String));
+ const choices=availableDrivers.length?availableDrivers.map(d=>{
+  const checked=selected.has(String(d.id))?' checked':'';
+  const photo=d.photoData?'<img src="'+esc(d.photoData)+'" alt="">':esc(String(d.name||'V').slice(0,1).toUpperCase());
+  return '<label class="driver-choice"><input type="checkbox" class="driver-pick-check" data-delivery="'+esc(x.deliveryId)+'" data-driver="'+esc(d.id)+'"'+checked+'><span class="driver-choice-photo">'+photo+'</span><span class="driver-choice-copy"><b>'+esc(d.name||'Entregador')+'</b><span>'+esc([d.vehicleType,d.plate].filter(Boolean).join(' • ')||'Entregador VELUM')+'</span></span><span class="online-dot '+(d.online?'on':'')+'"></span></label>';
+ }).join(''):'<div class="empty" style="padding:14px">Nenhum entregador aprovado.</div>';
+ return '<div class="driver-picker" data-picker="'+esc(x.deliveryId)+'"><button class="driver-picker-toggle" type="button" data-toggle-picker="'+esc(x.deliveryId)+'"><span>SELECIONAR ENTREGADORES PARA ESTA CORRIDA</span><span>'+(selected.size?selected.size+' selecionado(s)':'Todos')+'</span></button><div class="driver-picker-body">'+choices+'<div class="driver-picker-note">Sem seleção, a corrida fica disponível para todos. Um entregador que recusou esta entrega específica não será notificado novamente, mesmo se for selecionado.</div><div class="driver-picker-actions"><button class="btn secondary drivers-all" data-id="'+esc(x.deliveryId)+'" type="button">TODOS</button><button class="btn primary drivers-apply" data-id="'+esc(x.deliveryId)+'" type="button">APLICAR SELEÇÃO</button></div></div></div>';
+}
+function printerSvg(){return'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 3h10v4H7V3Zm10 14v4H7v-4h10Zm2-9a3 3 0 0 1 3 3v5h-4v-2H6v2H2v-5a3 3 0 0 1 3-3h14Zm-2 4h2v-2h-2v2Z"/></svg>'}
+function ride(x,done){const share=x.trackingUrl?'<button class="btn secondary share share-track" data-url="'+esc(x.trackingUrl)+'" data-phone="'+esc(x.customerPhone||'')+'" data-name="'+esc(x.customerName||'')+'">COMPARTILHAR COM A CLIENTE</button>':'';const waitingActions=!done&&x.status==='READY_TO_DISPATCH'?'<div class="waiting-actions"><button class="btn recall ride-call-prepared" data-id="'+esc(x.deliveryId)+'">CHAMAR ENTREGADOR</button><button class="btn secondary ride-edit" data-id="'+esc(x.deliveryId)+'">EDITAR</button><button class="btn danger ride-cancel" data-id="'+esc(x.deliveryId)+'">CANCELAR</button></div>':!done&&x.status==='WAITING_DRIVER'?'<div class="waiting-actions"><button class="btn recall ride-recall" data-id="'+esc(x.deliveryId)+'">CHAMAR NOVAMENTE</button><button class="btn secondary ride-edit" data-id="'+esc(x.deliveryId)+'">EDITAR</button><button class="btn danger ride-cancel" data-id="'+esc(x.deliveryId)+'">CANCELAR</button></div>':'';const editAny=!done&&x.status==='PREPARING'?'<button class="btn secondary ride-edit" data-id="'+esc(x.deliveryId)+'">✎ EDITAR</button>':'';const checked=selectedLabels.has(x.deliveryId)?' checked':'';return'<article class="card ride"><div class="ride-top"><label class="ride-select"><input class="label-check" type="checkbox" data-label-id="'+esc(x.deliveryId)+'"'+checked+'> Selecionar etiqueta</label><button class="print-one" data-print-id="'+esc(x.deliveryId)+'" type="button" aria-label="Imprimir etiqueta">'+printerSvg()+'</button></div><div class="ride-title-line"><span class="status">'+esc(statusLabel(x.status))+'</span></div><h4>'+esc(x.customerName||'Recebedor')+'</h4><div class="meta"><b>Cliente:</b> '+esc(x.customerName||'—')+(x.customerPhone?' • '+esc(x.customerPhone):'')+'<br><b>Retirada:</b> '+esc(x.originalPickupAddress||x.pickupAddress||'—')+'<br><b>Entrega:</b> '+esc(x.deliveryAddress||'—')+'<br><b>Valor:</b> '+money(x.deliveryFee||0)+' • '+esc(x.payerLabel||'')+'<br><b>Criada:</b> '+esc(dt(x.createdAt))+'</div>'+timeline(x)+logisticsButtons(x)+driverHtml(x.driver)+share+driverPicker(x)+editAny+waitingActions+'</article>'}
+
+function fillOrigin(loja){if(!loja)return;[['pickupAddress','pickupAddress'],['pickupNumber','pickupNumber'],['pickupNeighborhood','pickupNeighborhood'],['pickupCity','pickupCity'],['pickupState','pickupState'],['pickupZipCode','pickupZipCode'],['pickupPhone','pickupPhone']].forEach(([id,key])=>{if($(id)&&!$(id).value)$(id).value=loja[key]||''})}
+function allRideData(){return [...activeRides,...doneRides]}
+function rideById(id){return allRideData().find(x=>String(x.deliveryId)===String(id))}
+function currentVisibleRides(){if(!$('activePanel').classList.contains('on'))return doneRides;return activeRides.filter(x=>activeRideTab==='pickup'?(x.pickupOnly===true&&x.status==='PICKUP_PENDING'):activeRideTab==='logistics'?(x.internalLogistics===true&&['PREPARING','LOGISTICS_PACKED','LOGISTICS_IN_TRANSIT','AT_LOGISTICS_CENTER','AVAILABLE_FOR_CUSTOMER_PICKUP','LOGISTICS_READY_FOR_DRIVER'].includes(x.status)):activeRideTab==='accepted'?['DRIVER_ACCEPTED','GOING_TO_STORE','AT_STORE','COLLECTED','OUT_FOR_DELIVERY'].includes(x.status):['READY_TO_DISPATCH','WAITING_DRIVER'].includes(x.status))}
+
+function updatePrintState(){const n=selectedLabels.size;const text=n===0?'Nenhuma etiqueta selecionada':n===1?'1 etiqueta selecionada':n+' etiquetas selecionadas';if($('selectedInfo'))$('selectedInfo').textContent=text;if($('printSelected'))$('printSelected').disabled=n===0;if($('printSelectedDone'))$('printSelectedDone').disabled=n===0}
+function labelHtml(x){const address=[x.deliveryAddress,x.deliveryCity&&x.deliveryState?[x.deliveryCity,x.deliveryState].join(' - '):x.deliveryCity||x.deliveryState,x.deliveryZipCode].filter(Boolean);const qr='https://quickchart.io/qr?size=180&margin=1&text='+encodeURIComponent('https://www.lumenluxos.com');const code=x.labelCode||('VELUM:'+String(x.deliveryId||'')+':V'+String(x.labelRevision||1));const barcode='https://bwipjs-api.metafloor.com/?bcid=qrcode&scale=5&padding=2&text='+encodeURIComponent(code);return'<section class="shipping-label"><header><div class="lux">LÚMEN LUXOS</div><div class="tag">Exclusividade, Poder e Presença</div></header><main><div class="label-name">'+esc(x.customerName||'Recebedor')+'</div>'+(x.customerPhone?'<div class="label-phone">WhatsApp: '+esc(x.customerPhone)+'</div>':'')+'<div class="label-address">'+address.map(esc).join('<br>')+'</div>'+(x.deliveryInstructions?'<div class="label-ref"><b>Referência:</b> '+esc(x.deliveryInstructions)+'</div>':'')+'<div class="barcode"><img src="'+barcode+'" alt="QR Code da coleta"><div style="font-size:8pt;color:#738196;margin-top:1mm">QR de coleta • Etiqueta v'+esc(x.labelRevision||1)+'</div></div></main><footer><div class="thanks">Agradecemos pela sua compra!</div><div class="catalog"><img src="'+qr+'" alt="QR Code"><div><b>Conheça nosso catálogo</b><span>www.lumenluxos.com</span></div></div></footer></section>'}
+function printLabels(items){const list=(items||[]).filter(Boolean);if(!list.length)return;const w=window.open('','_blank');if(!w)return notice('Permita pop-ups para imprimir as etiquetas.',false);const doc='<!doctype html><html><head><meta charset="utf-8"><title>Etiquetas LÚMEN LUXOS</title><style>@page{size:10cm 15cm;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0;font-family:Arial,sans-serif;color:#102f59}.shipping-label{width:10cm;height:15cm;padding:.65cm;display:flex;flex-direction:column;page-break-after:always;background:#fff}.shipping-label:last-child{page-break-after:auto}header{border-bottom:2px solid #102f59;padding-bottom:.35cm}.lux{font-size:24pt;font-weight:900;letter-spacing:.5px}.tag{font-size:10pt;margin-top:2mm;color:#5c6d80}main{flex:1;padding-top:.5cm}.label-name{font-size:20pt;font-weight:900;line-height:1.05}.label-phone{font-size:11pt;margin-top:2mm}.label-address{font-size:15pt;font-weight:700;line-height:1.3;margin-top:.55cm}.label-ref{font-size:10.5pt;line-height:1.35;margin-top:.5cm;padding:.3cm;border:1px solid #d7e0ea;border-radius:8px}.barcode{text-align:center;margin-top:.45cm}.barcode img{width:3.4cm;height:3.4cm;object-fit:contain}.thanks{text-align:center;font-weight:800;font-size:11pt;margin-bottom:.35cm}.catalog{display:flex;align-items:center;justify-content:center;gap:.35cm;border-top:1px solid #d7e0ea;padding-top:.35cm}.catalog img{width:2.8cm;height:2.8cm}.catalog div{display:flex;flex-direction:column;gap:1mm}.catalog b{font-size:11pt}.catalog span{font-size:9pt;color:#5c6d80}@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>'+list.map(labelHtml).join('')+'<script>window.onload=()=>setTimeout(()=>window.print(),350)<\/script></body></html>';w.document.open();w.document.write(doc);w.document.close()}
+function startEditRide(x){
+ if(!x)return;
+ editingDeliveryId=String(x.deliveryId||'');
+ $('callBox').classList.add('on');
+ $('pickupAddress').value=x.pickupAddress||$('pickupAddress').value||'';
+ $('pickupNumber').value=x.pickupNumber||$('pickupNumber').value||'';
+ $('pickupNeighborhood').value=x.pickupNeighborhood||$('pickupNeighborhood').value||'';
+ $('pickupCity').value=x.pickupCity||$('pickupCity').value||'';
+ $('pickupState').value=x.pickupState||$('pickupState').value||'';
+ $('pickupZipCode').value=x.pickupZipCode||$('pickupZipCode').value||'';
+ $('deliveryAddress').value=x.deliveryAddress||'';
+ $('deliveryCity').value=x.deliveryCity||'';
+ $('deliveryState').value=x.deliveryState||'';
+ $('deliveryZipCode').value=x.deliveryZipCode||'';
+ $('customerName').value=x.customerName||'';
+ $('customerPhone').value=x.customerPhone||'';
+ $('instructions').value=x.deliveryInstructions||'';
+ $('payer').value=x.deliveryPaymentMode==='PAY_AT_DELIVERY'?'PAY_AT_DELIVERY':(x.deliveryPaymentMode==='PAY_AT_PICKUP'?'PAY_AT_PICKUP':'');
+ currentFee=Number(x.deliveryFee)||0;
+ stops=[];
+ renderStops();
+ routeReview();
+ $('readyConfirm').checked=true;
+ $('create').disabled=false;
+ $('create').textContent=x.status==='READY_TO_DISPATCH'?'SALVAR ALTERAÇÕES':'SALVAR ALTERAÇÕES E CHAMAR NOVAMENTE';
+ $('callBox').scrollIntoView({behavior:'smooth',block:'start'});
+ notice(x.status==='READY_TO_DISPATCH'?'Editando corrida antes do chamado. A etiqueta será refeita ao salvar.':'Editando corrida. Ao salvar, o chamado será enviado novamente.',true);
+}
+function resetEditMode(){
+ editingDeliveryId='';
+ $('create').textContent='GERAR ETIQUETA';
+}
+function bindRideActions(){
+ document.querySelectorAll('.log-act').forEach(b=>b.onclick=()=>{b.disabled=true;send('LOGISTICS_ACTION',{deliveryId:b.dataset.id,action:b.dataset.action})});
+ document.querySelectorAll('.share-track').forEach(b=>b.onclick=()=>{let n=String(b.dataset.phone||'').replace(/\D/g,'');if(n&&!n.startsWith('55'))n='55'+n;const msg='Olá'+(b.dataset.name?', '+b.dataset.name:'')+'! Acompanhe sua entrega LÚMEN em tempo real: '+b.dataset.url;if(n)window.open('https://wa.me/'+n+'?text='+encodeURIComponent(msg),'_blank');else navigator.clipboard?.writeText(b.dataset.url)});
+ document.querySelectorAll('.label-check').forEach(c=>c.onchange=()=>{if(c.checked)selectedLabels.add(c.dataset.labelId);else selectedLabels.delete(c.dataset.labelId);updatePrintState()});
+ document.querySelectorAll('.print-one').forEach(b=>b.onclick=()=>printLabels([rideById(b.dataset.printId)]));
+ document.querySelectorAll('.ride-call-prepared').forEach(b=>b.onclick=()=>{b.disabled=true;send('DISPATCH_PREPARED',{deliveryId:b.dataset.id})});
+ document.querySelectorAll('.ride-recall').forEach(b=>b.onclick=()=>{b.disabled=true;send('RECALL_DELIVERY',{deliveryId:b.dataset.id})});
+ document.querySelectorAll('.ride-cancel').forEach(b=>b.onclick=()=>{if(!confirm('Cancelar esta corrida? Ela deixará de aparecer para os entregadores.'))return;b.disabled=true;send('CANCEL_DELIVERY',{deliveryId:b.dataset.id})});
+ document.querySelectorAll('.ride-edit').forEach(b=>b.onclick=()=>startEditRide(rideById(b.dataset.id)));
+ document.querySelectorAll('[data-toggle-picker]').forEach(b=>b.onclick=()=>document.querySelector('[data-picker="'+b.dataset.togglePicker+'"]')?.classList.toggle('open'));
+ document.querySelectorAll('.drivers-all').forEach(b=>b.onclick=()=>{document.querySelectorAll('.driver-pick-check[data-delivery="'+b.dataset.id+'"]').forEach(c=>c.checked=false);send('SELECT_DRIVERS',{deliveryId:b.dataset.id,driverIds:[]})});
+ document.querySelectorAll('.drivers-apply').forEach(b=>b.onclick=()=>{const ids=[...document.querySelectorAll('.driver-pick-check[data-delivery="'+b.dataset.id+'"]:checked')].map(c=>c.dataset.driver);b.disabled=true;send('SELECT_DRIVERS',{deliveryId:b.dataset.id,driverIds:ids})});
+ updatePrintState();
+}
+function renderActiveList(){const list=currentVisibleRides();$('activeList').className='';$('activeList').innerHTML=list.length?list.map(x=>ride(x,false)).join(''):'<div class="empty">'+(activeRideTab==='logistics'?'Nenhuma entrega no centro logístico.':activeRideTab==='accepted'?'Nenhuma corrida aceita.':activeRideTab==='pickup'?'Nenhuma retirada pendente.':'Nenhuma corrida procurando entregador.')+'</div>';bindRideActions()}
+function render(d){availableDrivers=Array.isArray(d?.drivers)?d.drivers:[];$('activeCount').textContent=String(d?.resumo?.emCurso||0);$('doneCount').textContent=String(d?.resumo?.concluidas||0);fillOrigin(d?.loja);activeRides=Array.isArray(d?.emCurso)?d.emCurso:[];doneRides=Array.isArray(d?.concluidas)?d.concluidas:[];const logistics=activeRides.filter(x=>x.internalLogistics===true&&['PREPARING','LOGISTICS_PACKED','LOGISTICS_IN_TRANSIT','AT_LOGISTICS_CENTER','AVAILABLE_FOR_CUSTOMER_PICKUP','LOGISTICS_READY_FOR_DRIVER'].includes(x.status));const accepted=activeRides.filter(x=>['DRIVER_ACCEPTED','GOING_TO_STORE','AT_STORE','COLLECTED','OUT_FOR_DELIVERY'].includes(x.status));const waiting=activeRides.filter(x=>['READY_TO_DISPATCH','WAITING_DRIVER'].includes(x.status));const pickup=activeRides.filter(x=>x.pickupOnly===true&&x.status==='PICKUP_PENDING');const counts={logistics:logistics.length,waiting:waiting.length,accepted:accepted.length,pickup:pickup.length,done:doneRides.length};document.querySelectorAll('.tracking-tab[data-view]').forEach(b=>{let badge=b.querySelector('.velum-counter');if(!badge){badge=document.createElement('span');badge.className='velum-counter';b.appendChild(badge)}badge.textContent=String(counts[b.dataset.view]??0)});$('logisticsCount').textContent=logistics.length;$('acceptedCount').textContent=accepted.length;$('waitingCount').textContent=waiting.length;$('activeSummary').textContent=activeRides.length+' '+(activeRides.length===1?'entrega':'entregas');renderActiveList();$('doneList').className='';$('doneList').innerHTML=doneRides.length?doneRides.map(x=>ride(x,true)).join(''):'<div class="empty">Nenhuma corrida concluída ainda.</div>';bindRideActions()}
+
+function renderStops(){const card=$('logisticsStopCard');card.style.display=stops.length?'block':'none';const box=$('stopList');box.innerHTML=stops.map((x,i)=>'<div class="stop"><div class="stop-head"><b>Parada '+(i+1)+'</b><button class="stop-remove" data-rm="'+i+'" type="button">REMOVER</button></div><div class="grid"><div class="field"><label>Nome do centro</label><input data-stop="'+i+'" data-key="name" value="'+esc(x.name||'')+'" placeholder="Centro de distribuição '+(i+1)+'"></div><div class="field"><label>Endereço</label><input data-stop="'+i+'" data-key="address" value="'+esc(x.address||'')+'"></div></div><div class="grid three"><div class="field"><label>Cidade</label><input data-stop="'+i+'" data-key="city" value="'+esc(x.city||'')+'"></div><div class="field"><label>UF</label><input data-stop="'+i+'" data-key="state" value="'+esc(x.state||'')+'" maxlength="2"></div><div class="field"><label>CEP</label><input data-stop="'+i+'" data-key="zipCode" value="'+esc(x.zipCode||'')+'"></div></div><label class="stop-fee"><input type="checkbox" data-stop="'+i+'" data-key="hasFee" '+(x.hasFee?'checked':'')+'> Adicionar taxa extra <input type="number" min="0" step="0.01" data-stop="'+i+'" data-key="fee" value="'+Number(x.fee||0)+'" placeholder="R$"></label></div>').join('');box.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{stops.splice(Number(b.dataset.rm),1);renderStops()});box.querySelectorAll('[data-stop][data-key]').forEach(el=>el.oninput=el.onchange=()=>{const i=Number(el.dataset.stop),k=el.dataset.key;stops[i][k]=k==='hasFee'?el.checked:k==='fee'?Number(el.value||0):el.value})}
+let pendingPrintWindow=null;
+let lastCreatePayload=null;
+function payload(){return{pickupAddress:$('pickupAddress').value.trim(),pickupNumber:$('pickupNumber').value.trim(),pickupNeighborhood:$('pickupNeighborhood').value.trim(),pickupCity:$('pickupCity').value.trim(),pickupState:$('pickupState').value.trim().toUpperCase(),pickupZipCode:$('pickupZipCode').value.trim(),deliveryAddress:$('deliveryAddress').value.trim(),deliveryCity:$('deliveryCity').value.trim(),deliveryState:$('deliveryState').value.trim().toUpperCase(),deliveryZipCode:$('deliveryZipCode').value.trim(),customerName:$('customerName').value.trim(),customerPhone:$('customerPhone').value.trim(),deliveryInstructions:$('instructions').value.trim(),deliveryPaymentMode:$('payer').value,deliveryFee:currentFee,logisticsStages:stops,customerPickupAtCenter:$('customerPickupAtCenter').checked,customerPickupAtStore:false,customerPickupExtraFee:Number($('customerPickupExtraFee').value)||0,readyConfirmed:$('readyConfirm').checked}}
+function routeReview(){const pts=[['Retirada',[ $('pickupAddress').value,$('pickupNumber').value,$('pickupNeighborhood').value,$('pickupCity').value,$('pickupState').value].filter(Boolean).join(', ')],...stops.map((x,i)=>['Parada '+(i+1),[x.name,x.address,x.city,x.state].filter(Boolean).join(' • ')]),[ $('customerPickupAtCenter').checked?'Endereço da cliente (etiqueta)':'Entrega',[$('deliveryAddress').value,$('deliveryCity').value,$('deliveryState').value].filter(Boolean).join(' • ')]];$('routeBox').innerHTML=pts.map(p=>'<div class="route-point"><small>'+esc(p[0])+'</small><b>'+esc(p[1])+'</b></div>').join('');$('quoteValue').textContent=money((false||$('customerPickupAtCenter').checked)?Math.max(0,Number($('customerPickupExtraFee').value)||0):currentFee);const extra=stops.reduce((s,x)=>s+(x.hasFee?Number(x.fee)||0:0),0);$('extraFeeText').textContent=extra>0?'Taxas internas informadas: '+money(extra)+' (não alteram o ganho do entregador VELUM).':'Sem taxa extra de centros de distribuição.';$('review').classList.add('on');$('calc').closest('.form-actions').style.display='none';$('review').scrollIntoView({behavior:'smooth',block:'start'})}
+
+$('createPickupOpen').onclick=()=>{const box=$('pickupBox');box.style.display=box.style.display==='none'?'block':'none';if(box.style.display==='block')box.scrollIntoView({behavior:'smooth',block:'start'})};
+$('pickupCreate').onclick=()=>{const buyerName=$('pickupBuyer').value.trim(),buyerPhone=$('pickupBuyerPhone').value.trim(),notes=$('pickupNotes').value.trim();if(buyerName.length<3||buyerPhone.replace(/\D/g,'').length<10){$('pickupResult').textContent='Informe nome e WhatsApp completos.';return}$('pickupCreate').disabled=true;$('pickupResult').textContent='Gerando retirada...';send('CREATE_PICKUP',{buyerName,buyerPhone,notes})};
+$('call').onclick=()=>{$('callBox').classList.toggle('on');if($('callBox').classList.contains('on'))$('callBox').scrollIntoView({behavior:'smooth',block:'start'})};
+$('customerPickupAtCenter').onchange=()=>{if($('customerPickupAtCenter').checked)currentFee=0;$('review').classList.remove('on');$('calc').closest('.form-actions').style.display='grid'};
+$('addStop').onclick=()=>{stops.push({name:'Casa de Ximba',address:'Rua Pedro Pereira de Lucena, 515',city:'Brejo Santo',state:'CE',zipCode:'63260-000',hasFee:false,fee:0});renderStops();$('logisticsStopCard').scrollIntoView({behavior:'smooth',block:'start'})};
+$('deliveryAddress').oninput=()=>{clearTimeout(suggestTimer);const term=$('deliveryAddress').value.trim();if(term.length<3){$('deliverySuggestions').classList.remove('on');return}suggestTimer=setTimeout(()=>send('SUGGEST_ADDRESS',{term,target:'delivery'}),350)};
+$('calc').onclick=()=>{clearNotice();currentFee=0;$('calc').disabled=true;$('calc').textContent='CALCULANDO...';send('CALCULATE',payload())};
+$('editRoute').onclick=()=>{$('review').classList.remove('on');$('calc').closest('.form-actions').style.display='grid';$('readyConfirm').checked=false;$('create').disabled=true};
+$('cancelRoute').onclick=()=>{currentFee=0;resetEditMode();$('review').classList.remove('on');$('calc').closest('.form-actions').style.display='grid';clearNotice()};
+$('readyConfirm').onchange=()=>{$('create').disabled=!$('readyConfirm').checked};
+$('create').onclick=()=>{if(!(currentFee>0)&&true)return notice('Calcule a entrega primeiro.');$('create').disabled=true;if(editingDeliveryId){$('create').textContent='SALVANDO...';send('UPDATE_DELIVERY',{deliveryId:editingDeliveryId,data:payload()})}else{$('create').textContent=stops.length?'CRIANDO PROCESSO...':'GERANDO ETIQUETA...';lastCreatePayload=payload();pendingPrintWindow=window.open('','_blank');if(pendingPrintWindow){pendingPrintWindow.document.write('<title>Gerando etiqueta VELUM...</title><p>Preparando impressão...</p>');pendingPrintWindow.document.close()}send('CREATE_DELIVERY',lastCreatePayload)}};
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{const value=b.dataset.view;document.querySelectorAll('[data-view]').forEach(x=>x.classList.toggle('on',x===b));$('activePanel').classList.toggle('on',value!=='done');$('donePanel').classList.toggle('on',value==='done');if(value!=='done'){activeRideTab=value;renderActiveList()}updatePrintState()});
+$('selectVisible').onclick=()=>{const list=currentVisibleRides();const allSelected=list.length&&list.every(x=>selectedLabels.has(x.deliveryId));list.forEach(x=>allSelected?selectedLabels.delete(x.deliveryId):selectedLabels.add(x.deliveryId));renderActiveList()};
+$('printSelected').onclick=()=>printLabels([...selectedLabels].map(rideById).filter(Boolean));
+$('printSelectedDone').onclick=()=>printLabels([...selectedLabels].map(rideById).filter(Boolean));
+$('logout').onclick=()=>send('LOGOUT');
+
+window.addEventListener('message',e=>{const m=e.data||{};if(m.source!=='LUMEN_ADMIN_PANEL_PAGE')return;const d=m.payload||{};
+ if(m.type==='DATA')render(d);
+ if(m.type==='ERROR')notice(d.message||m.message||'Não foi possível carregar.',false);
+ if(m.type==='SUGGEST_RESULT'){const box=$('deliverySuggestions');const items=Array.isArray(d.items)?d.items:[];box.innerHTML=items.map((x,i)=>'<div class="suggestion" data-i="'+i+'">'+esc(x.label||x.address)+'</div>').join('');box.classList.toggle('on',items.length>0);box.querySelectorAll('[data-i]').forEach(el=>el.onclick=()=>{const x=items[Number(el.dataset.i)];$('deliveryAddress').value=x.address||x.label||'';$('deliveryCity').value=x.city||'';$('deliveryState').value=x.state||'';$('deliveryZipCode').value=x.zipCode||'';box.classList.remove('on')})}
+ if(m.type==='CALCULATE_RESULT'){$('calc').disabled=false;$('calc').textContent='CALCULAR ENTREGA';if(!d.ok){currentFee=0;return notice(d.mensagem||'Não foi possível calcular.',false)}currentFee=Number(d.shipping?.amount)||0;routeReview();notice('Trajeto calculado. Revise antes de confirmar.',true)}
+ if(m.type==='CREATE_PICKUP_RESULT'){$('pickupCreate').disabled=false;if(!d.ok){$('pickupResult').textContent=d.mensagem||'Falha ao criar retirada.';return}const url=String(d.receiptUrl||'');const qr='https://bwipjs-api.metafloor.com/?bcid=qrcode&scale=5&padding=2&text='+encodeURIComponent(url);$('pickupResult').innerHTML='<strong>Retirada '+esc(d.id)+'</strong><p>Etiqueta pronta para imprimir. O QR Code abre a confirma??o da retirada e o comprovante.</p><div style="padding:12px;background:white;color:#14325c;border:1px solid #dbe3f1;text-align:center"><h3>L?MEN LUXOS ? RETIRADA</h3><p>'+esc($('pickupBuyer').value)+'</p><p>'+esc($('pickupBuyerPhone').value)+'</p><p>'+esc($('pickupNotes').value)+'</p><img src="'+qr+'" alt="QR Code" style="width:165px;max-width:100%"><p>'+esc(d.id)+'</p></div><p><a href="'+url+'" target="_blank">Abrir comprovante</a></p><button id="printPickup">IMPRIMIR ETIQUETA</button>';$('printPickup').onclick=()=>{const w=window.open('','_blank');if(!w)return alert('Permita abrir a janela de impress?o.');w.document.write('<html><head><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>'+$('pickupResult').querySelector('div').outerHTML+'<script>window.onload=()=>window.print()<\/script></body></html>');w.document.close()};return}
+ if(m.type==='CREATE_RESULT'){$('create').textContent='GERAR ETIQUETA';if(d.ok){
+ const details={...lastCreatePayload,...d,deliveryId:d.deliveryId||d.id,callerType:'LUMEN',callerName:'LUMEN LUXOS',isLumen:true,deliveryPaymentMode:lastCreatePayload?.deliveryPaymentMode,customerPickupAtCenter:lastCreatePayload?.customerPickupAtCenter,customerPickupMode:lastCreatePayload?.customerPickupAtCenter?'CENTER':'DELIVERY',customerPickupExtraFee:lastCreatePayload?.customerPickupExtraFee,customerPickupCharge:lastCreatePayload?.customerPickupAtCenter?(Number(lastCreatePayload?.customerPickupExtraFee)||0):undefined};
+ if(window.VelumLabel){const printed=window.VelumLabel.print(details,pendingPrintWindow);if(!printed)notice('Etiqueta gerada, mas houve erro ao abrir a impressão. Use Imprimir etiqueta no pedido.')}else{notice('Impressora de etiquetas não carregou. Atualize a página e tente novamente.');if(pendingPrintWindow&&!pendingPrintWindow.closed)pendingPrintWindow.close()}pendingPrintWindow=null;
+ }if(!d.ok){if(pendingPrintWindow&&!pendingPrintWindow.closed)pendingPrintWindow.close();pendingPrintWindow=null;$('create').disabled=false;return notice(d.mensagem||'Não foi possível criar a corrida.',false)}notice(d.mensagem||'Processo criado.',true);currentFee=0;stops=[];renderStops();$('review').classList.remove('on');$('calc').closest('.form-actions').style.display='grid';$('readyConfirm').checked=false;$('create').disabled=true;$('deliveryAddress').value='';$('deliveryCity').value='';$('deliveryState').value='';$('deliveryZipCode').value='';$('customerName').value='';$('customerPhone').value='';$('instructions').value='';$('callBox').classList.remove('on')}
+ if(m.type==='LOGISTICS_RESULT'){notice(d.mensagem||'Processo atualizado.',d.ok===true)}
+ if(m.type==='ACTION_RESULT'){
+   if(!d.ok){$('create').disabled=false;if(editingDeliveryId)$('create').textContent='SALVAR ALTERAÇÕES E CHAMAR NOVAMENTE';notice(d.mensagem||'Não foi possível concluir a ação.',false);return}
+   notice(d.mensagem||'Ação concluída.',true);
+   if(d.action==='UPDATE'){resetEditMode();$('review').classList.remove('on');$('calc').closest('.form-actions').style.display='grid';$('callBox').classList.remove('on')}
+ }
+});
+renderStops();send('READY');
+
+</script>
+<script>/* VELUM_HOME_LINK */
+(()=>{const el=document.querySelector('.brand,.topbrand,.logo,.mark');if(!el)return;el.style.cursor='pointer';el.setAttribute('role','link');el.setAttribute('aria-label','Ir para o início LÚMEN');el.addEventListener('click',()=>parent.postMessage({source:'LUMEN_ADMIN_PANEL',type:'HOME'},'*'))})();
+</script>
+
+<!-- VELUM_APP_DOWNLOAD -->
+<style id="velumAppDownloadStyle">
+#velumAppDownload{position:fixed;right:14px;bottom:92px;z-index:2147483000;display:flex;align-items:center;gap:7px;background:#0F3665;color:#fff!important;text-decoration:none;border:1px solid #ffffff33;border-radius:999px;padding:10px 13px;font:900 10px/1.1 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;box-shadow:0 10px 28px #0f366545;transition:.18s}
+#velumAppDownload:hover{transform:translateY(-2px)}
+#velumAppDownload .vad-dot{width:21px;height:21px;border-radius:7px;background:#FF7A00;display:grid;place-items:center;font-size:12px}
+@media(max-width:520px){#velumAppDownload{right:10px;bottom:88px;padding:9px 11px}}
+</style>
+<a id="velumAppDownload" href="https://github.com/lidiafeitosalucianojunior-hash/velum-android-download/releases/download/v1.1.0/app-release.apk" target="_top" rel="noopener" aria-label="Baixar aplicativo VELUM"><span class="vad-dot">↓</span><span>Baixar app VELUM</span></a>
+<script id="velumAppDownloadScript">
+(()=>{const el=document.getElementById('velumAppDownload');if(!el)return;const native=/VELUMNative\/1\.0/i.test(navigator.userAgent||'');if(native)el.remove()})();
+</script>
+<script>(function(){
+'use strict';
+function txt(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function value(x,...keys){for(const k of keys){const v=x?.[k];if(v!==undefined&&v!==null&&String(v).trim()!=='')return v;}return '';}
+function normalize(x){
+ const id=value(x,'labelCode','deliveryId','id','orderId','pedidoId','trackingCode');
+ const code=String(id||'').trim();
+ const phone=String(value(x,'customerPhone','recipientPhone','telefone','phone','customerWhatsApp')).replace(/\D/g,'');
+ let name=value(x,'customerName','recipientName','destinatario','nomeDestinatario');
+ let address=value(x,'deliveryAddress','recipientAddress','enderecoEntrega','address');
+ let city=value(x,'deliveryCity','cidadeEntrega','city');
+ let state=value(x,'deliveryState','ufEntrega','state');
+ let zip=value(x,'deliveryZipCode','cepEntrega','zipCode');
+ let complement=value(x,'deliveryComplement','complemento');
+ let payer=value(x,'deliveryPaymentMode','deliveryPayer','freightPayer','payer','quemPaga','pagador','paymentMode');
+ const stages=Array.isArray(x?.logisticsStages)?x.logisticsStages:[];
+ const pickup=(x?.customerPickupAtCenter===true||x?.customerPickupAtStore===true||['CENTER','STORE'].includes(String(x?.customerPickupMode||'').toUpperCase())||x?.pickupKind==='CENTER');
+ const fee=pickup?Math.max(0,Number(x?.customerPickupExtraFee??x?.customerPickupCharge??0)||0):Number(value(x,'deliveryFee','deliveryPrice','freight','frete','valorEntrega','fee')||0);
+ return {code,name,address,city,state,zip,complement,phone,payer,fee,pickup};
+
+}
+function money(v){const n=Number(String(v??'').replace(',','.'));return Number.isFinite(n)?n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'Não informado';}
+function imgUrl(type,data){return 'https://bwipjs-api.metafloor.com/?bcid='+type+'&scale=4&height=12&includetext=false'+(type==='qrcode'?'&eclevel=H':'')+'&text='+encodeURIComponent(data);}
+function page(raw){
+ const x=normalize(raw);
+ if(!x.code||!x.name||!x.address)throw Error('Informe destinatário, endereço e identificação antes de imprimir.');
+ const mode=String(value(raw,'deliveryPaymentMode','paymentMode','freightPaymentMode')||'');
+ const validPayer=x.pickup&&x.fee===0||['PAY_AT_PICKUP','PAY_AT_DELIVERY','PAY_ON_DELIVERY','LUMEN','RECEIVER','SENDER'].includes(String(x.payer).toUpperCase())||['PAY_AT_PICKUP','PAY_AT_DELIVERY'].includes(mode);
+ if(!validPayer)throw Error('Selecione quem paga a entrega antes de gerar a etiqueta.');
+ const lumen=String(value(raw,'callerType','callerId','sellerId','callerName','origin')||'').toUpperCase().includes('LUMEN')||String(value(raw,'callerType','callerId','sellerId','callerName','origin')||'').toUpperCase().includes('LÚMEN')||raw?.isLumen===true||raw?.isLidia===true;
+ const title=lumen?'LUMEN LUXOS':'VELUM';
+ const subtitle=lumen?'EXCLUSIVIDADE · PODER · PRESENÇA':'MAIS QUE ENTREGAS, CONEXÕES REAIS.';
+ const side=lumen?'@lumenluxos':'LOGÍSTICA INTELIGENTE PARA UM AMANHÃ MAIS PRÓXIMO.';
+ const wa=x.phone.length>=10&&x.phone.length<=13?'https://wa.me/'+(x.phone.startsWith('55')?x.phone:'55'+x.phone):'';
+ const address=[x.address,x.complement,[x.city,x.state].filter(Boolean).join(' – '),x.zip?'CEP: '+x.zip:''].filter(Boolean).map(txt).join('<br>');
+ const payer=['PAY_AT_PICKUP','LUMEN','SENDER'].includes(String(x.payer).toUpperCase())||mode==='PAY_AT_PICKUP'?'Remetente':'Destinatário';
+ return '<article class="velum-label"'+(x.pickup?' data-pickup="true"':'')+'>'+
+ '<header class="masthead"><div class="brandarea"><div class="brandname '+(lumen?'lumen':'')+'">'+title+'</div><div class="tagline">'+subtitle+'</div></div><aside>'+side+'</aside></header>'+
+ '<div class="strip"><span>ETIQUETA DE ENVIO</span><span>COLETA ◇</span></div>'+
+ '<div class="detail"><div class="recipientcol"><div class="mini">NOME DO DESTINATÁRIO</div><strong class="recipient">'+txt(x.name)+'</strong><hr><div class="mini">ENDEREÇO DO DESTINATÁRIO</div><div class="address">'+address+'</div></div>'+
+ '<div class="qrbox"><div class="mini">QR CODE — WHATSAPP<br>DO DESTINATÁRIO</div>'+(wa?'<div class="qrframe"><img src="'+imgUrl('qrcode',wa)+'" alt="QR Code WhatsApp"><span class="waicon" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="#111" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.966-.273-.099-.471-.148-.67.15-.198.297-.767.966-.94 1.164-.173.198-.347.223-.644.075-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.058-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.297-.496.099-.198.05-.372-.025-.521-.075-.149-.669-1.612-.916-2.206-.242-.579-.487-.5-.669-.51-.173-.008-.372-.01-.57-.01-.198 0-.52.074-.793.372-.272.297-1.04 1.015-1.04 2.479s1.065 2.875 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.693.625.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.002-5.45 4.436-9.883 9.885-9.883a9.83 9.83 0 0 1 6.99 2.895 9.83 9.83 0 0 1 2.893 6.993c-.003 5.45-4.436 9.885-9.884 9.885m8.413-18.297A11.8 11.8 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.893a11.84 11.84 0 0 0 1.587 5.925L.057 24l6.326-1.658a11.88 11.88 0 0 0 5.664 1.444h.005c6.557 0 11.893-5.335 11.896-11.893a11.82 11.82 0 0 0-3.484-8.405z"/></svg></span></div>':'<span class="sub">Telefone não informado</span>')+'<small>ESCANEIE PARA FALAR COM O DESTINATÁRIO</small></div></div>'+
+ '<div class="payment"><div><div class="mini">QUEM PAGA A ENTREGA</div><b>Pagador: '+(x.pickup&&Number(x.fee)===0?'Gratuita':payer)+'</b></div><div><div class="mini">VALOR DA ENTREGA</div><b>'+money(x.fee)+'</b></div></div>'+
+ ('<div class="bar"><div class="barhead"><span>CÓDIGO DE COLETA</span><small>USO EXCLUSIVO DA TRANSPORTADORA</small></div><img src="'+imgUrl('code128',x.code)+'" alt="Código de coleta"><strong>'+txt(x.code)+'</strong></div>')+
+ '<footer><span>◇ &nbsp; ENTREGA COM PROPÓSITO.</span><b>'+title+'</b><span>'+(lumen?'@lumenluxos':'PESSOAS MOVEM HISTÓRIAS.')+'</span></footer></article>';
+}
+const css=`@page{size:100mm 150mm;margin:0}*{box-sizing:border-box}html,body{margin:0;background:white;color:#080808;-webkit-print-color-adjust:exact;print-color-adjust:exact}.velum-label{width:100mm;height:150mm;overflow:hidden;padding:5mm 4mm 4mm;border:0.65mm solid #080808;border-radius:3mm;display:flex;flex-direction:column;font-family:Arial,Helvetica,sans-serif;break-after:page;page-break-after:always}.velum-label:last-child{break-after:auto;page-break-after:auto}.masthead{display:grid;grid-template-columns:1fr 27%;align-items:center;min-height:29mm;border-bottom:.5mm solid #000;padding-bottom:3mm;gap:2mm}.brandarea{text-align:center;min-width:0}.brandname{font-family:Georgia,'Times New Roman',serif;font-size:43pt;letter-spacing:1.4mm;line-height:.9;white-space:nowrap}.brandname.lumen{font-size:23pt;letter-spacing:.4mm;font-weight:700;line-height:1.05}.tagline{font-size:6pt;letter-spacing:1.45mm;margin-top:3mm;line-height:1.7;font-weight:600}.masthead aside{border-left:.4mm solid #000;padding-left:2mm;align-self:center;font-size:6pt;letter-spacing:.65mm;line-height:1.8;text-transform:uppercase;overflow-wrap:anywhere}.strip{display:flex;justify-content:space-between;align-items:center;border-bottom:.35mm solid #000;padding:3mm 1mm;font-size:8pt;letter-spacing:1mm;font-weight:800}.strip span+span{border-left:.35mm solid #000;padding-left:3mm;font-size:7pt}.detail{display:grid;grid-template-columns:minmax(0,1fr) 33%;gap:3mm;padding:4mm 1mm;flex:1;min-height:0}.recipientcol{min-width:0;overflow:hidden}.mini{font-size:6.7pt;font-weight:800;letter-spacing:.55mm;line-height:1.35;margin-bottom:2mm}.recipient{font-family:Georgia,'Times New Roman',serif;font-size:19pt;line-height:1.07;display:block;overflow-wrap:anywhere}.recipientcol hr{border:0;border-top:.35mm solid #000;margin:4mm 0}.address{font-family:Georgia,'Times New Roman',serif;font-size:12.1pt;line-height:1.25;overflow-wrap:anywhere}.qrbox{border-left:.35mm solid #000;padding-left:3mm;display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:flex-start}.qrbox .mini{font-size:6pt;line-height:1.6}.qrbox img{width:100%;max-width:28mm;aspect-ratio:1;object-fit:contain;margin:2mm auto}.qrbox small{font-size:5.5pt;letter-spacing:.4mm;line-height:1.5}.payment{border:.35mm solid #000;border-radius:1.5mm;display:grid;grid-template-columns:1fr 1fr;gap:3mm;padding:3mm 2mm;margin-bottom:3mm;min-height:19mm;align-items:center}.payment>div+div{border-left:.35mm dotted #000;padding-left:3mm}.payment b{font-family:Georgia,serif;font-size:11pt;overflow-wrap:anywhere}.bar{border-top:.35mm solid #000;text-align:center;padding:2mm 1mm 3mm;min-height:27mm}.barhead{display:flex;justify-content:space-between;font-size:7pt;font-weight:800;letter-spacing:.6mm}.barhead small{font-size:5pt;font-weight:500;letter-spacing:.3mm}.bar img{width:94%;height:13mm;display:block;object-fit:fill;margin:2mm auto}.bar strong{font-size:9pt;letter-spacing:1mm;overflow-wrap:anywhere}footer{margin-top:auto;border-top:.35mm solid #000;padding-top:2mm;display:grid;grid-template-columns:1fr 1.1fr 1fr;align-items:center;text-align:center;gap:2mm;font-size:5.6pt;letter-spacing:.5mm;min-height:11mm}footer>*+*{border-left:.3mm solid #000;padding-left:2mm}footer b{font-family:Georgia,serif;font-size:11pt;letter-spacing:.5mm}footer span{overflow-wrap:anywhere}.velum-label[data-pickup="true"] .detail{flex:1}
+.masthead{flex:0 0 28mm;min-height:0}.brandname{font-size:33pt;letter-spacing:.6mm}.brandname.lumen{font-size:21pt;letter-spacing:.15mm}.detail{flex:1 1 auto;min-height:0;overflow:hidden}.recipientcol{display:flex;flex-direction:column;min-height:0}.recipient{font-size:17pt;line-height:1.1;max-height:25mm;overflow:hidden}.recipientcol hr{flex-shrink:0;margin:3mm 0}.address{font-size:10.5pt;line-height:1.22;overflow:hidden;flex:1;min-height:0}.qrbox{min-height:0;overflow:hidden;justify-content:flex-start}.qrframe{position:relative;width:100%;max-width:27mm;aspect-ratio:1;margin:1mm auto}.qrframe>img{margin:0;width:100%;height:100%;max-width:none;object-fit:contain}.waicon{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:4.7mm;height:4.7mm;display:flex;justify-content:center;align-items:center;background:#fff;border-radius:50%;font-size:10pt;font-weight:900}.qrbox small{font-size:5pt;line-height:1.2}.payment{flex:0 0 19mm;margin-top:2mm;margin-bottom:2mm;min-height:0;overflow:hidden}.bar{flex:0 0 27mm;min-height:0;overflow:hidden}.bar img{height:11mm}.velum-label[data-pickup="true"] .payment{margin-top:auto}.velum-label[data-pickup="true"] .detail{flex:1 1 auto}footer{flex:0 0 11mm;min-height:0}
+.velum-label{display:grid;grid-template-rows:26mm 11mm minmax(0,1fr) 20mm 27mm 10mm;gap:0;padding:4mm 4mm 3mm}.masthead{min-height:0;min-width:0;padding-bottom:2mm}.detail{display:grid;flex:none;min-height:0;overflow:hidden;padding:3mm 1mm 2mm;grid-template-columns:minmax(0,1fr) 32%}.recipientcol{display:grid;grid-template-rows:auto auto 3mm auto minmax(0,1fr);min-width:0;min-height:0;overflow:hidden;align-content:stretch}.recipient{font-size:15.5pt;line-height:1.07;max-height:23mm;overflow:hidden}.recipientcol hr{margin:1mm 0;width:100%;align-self:center}.address{font-size:10pt;line-height:1.16;min-height:0;max-height:100%;overflow:hidden}.address.compact-address{font-size:8.7pt;line-height:1.12}.qrbox{overflow:hidden;min-height:0}.qrframe{height:24mm;width:24mm;flex:0 0 24mm}.payment{flex:none;min-height:0;height:20mm;padding:2mm;overflow:hidden}.payment b{font-size:10pt}.bar{flex:none;min-height:0;height:27mm;overflow:hidden}.bar img{height:12mm}footer{min-height:0;margin:0}.velum-label[data-pickup="true"]{grid-template-rows:26mm 11mm minmax(0,1fr) 20mm 10mm}.velum-label[data-pickup="true"] footer{grid-row:5}
+.velum-label{grid-template-rows:23mm 10mm minmax(0,1fr) 17mm 22mm 9mm;padding:3.5mm 3.5mm 2.5mm}
+.masthead{min-height:0}.brandname{font-size:30pt}.brandname.lumen{font-size:19pt}
+.detail{min-height:0;padding:2mm 1mm;grid-template-columns:minmax(0,1fr) 32%}
+.recipientcol{min-height:0;grid-template-rows:auto minmax(0,auto) 3mm auto minmax(0,1fr)}
+.recipient{font-size:14pt;line-height:1.05;max-height:27mm}
+.address{font-size:9.6pt;line-height:1.15;overflow-wrap:anywhere}
+.qrframe{width:23mm;height:23mm;flex-basis:23mm}
+.payment{height:17mm;padding:1.7mm 2mm;align-self:stretch}
+.bar{height:22mm;padding:1mm}.bar img{height:10mm;margin:.6mm auto}.bar strong{font-size:7pt}
+.velum-label[data-pickup="true"]{grid-template-rows:23mm 10mm minmax(0,1fr) 17mm 22mm 9mm}
+
+.velum-label{position:relative;display:block;width:100mm;height:150mm;padding:0;border:0.4mm solid #111;overflow:hidden}
+.masthead{position:absolute;left:4mm;right:4mm;top:3mm;height:26mm;display:grid;grid-template-columns:73% 27%;overflow:hidden}
+.brandname.lumen{font-size:19pt}.masthead aside{font-size:6pt;line-height:1.45;overflow:hidden}
+.strip{position:absolute;left:4mm;right:4mm;top:30mm;height:11mm;overflow:hidden}
+.detail{position:absolute;left:4mm;right:4mm;top:42mm;height:58mm;display:grid;grid-template-columns:64% 36%;overflow:hidden}
+.recipientcol{display:block;overflow:hidden;min-height:0}
+.recipient{font-size:15pt;line-height:1.1;max-height:25mm;overflow:hidden}
+.recipientcol hr{margin:3mm 0 2mm}
+.address{font-size:10pt;line-height:1.16;max-height:27mm;overflow:hidden}
+.qrbox{height:57mm;overflow:hidden}.qrframe{margin:3mm auto 2mm;height:25mm;width:25mm}
+.payment{position:absolute;left:4mm;right:4mm;top:102mm;height:17mm;display:grid;grid-template-columns:52% 48%;overflow:hidden;margin:0}
+.payment b{font-size:10.5pt;line-height:1.12}.payment .mini{font-size:6pt}
+.bar{position:absolute;left:4mm;right:4mm;top:121mm;height:17mm;overflow:hidden;border-top:0;padding:0}
+.barhead{font-size:6pt}.bar img{height:10mm;margin:1mm auto 0}.bar strong{font-size:6.5pt}
+footer{position:absolute;left:4mm;right:4mm;top:140mm;height:8mm;overflow:hidden;margin:0;padding-top:1mm}
+.velum-label[data-pickup="true"] .detail{height:58mm}
+.velum-label[data-pickup="true"] .payment{top:102mm}
+.velum-label[data-pickup="true"] footer{top:140mm}
+
+/* Correções específicas da impressão térmica 100 x 150 mm */
+.masthead{grid-template-columns:65% 35%;gap:1mm}
+.brandname.lumen{font-size:17pt;letter-spacing:-.15mm;white-space:nowrap}
+.tagline{font-size:5pt;letter-spacing:.5mm;line-height:1.35}
+.masthead aside{font-size:6.4pt;letter-spacing:0;overflow-wrap:normal;word-break:normal;white-space:nowrap;padding-left:2mm}
+.bar{top:120mm;height:15mm}
+.barhead{font-size:5.7pt}
+.bar img{height:8.5mm;margin:.8mm auto 0}
+.bar strong{display:block;font-size:6pt;letter-spacing:.12mm;line-height:1.1;white-space:nowrap}
+footer{top:137mm;height:10mm;grid-template-columns:31% 38% 31%;gap:0;align-items:center;padding:1mm 0 0}
+footer b{font-size:9pt;letter-spacing:0;line-height:1}
+footer span{font-size:4.9pt;line-height:1.25;letter-spacing:0;overflow-wrap:normal;word-break:normal}
+footer>*+*{padding-left:1mm}
+.velum-label[data-pickup="true"] footer{top:137mm}
+@media screen{body{background:#eee}.velum-label{background:#fff;margin:5mm auto;box-shadow:0 3px 16px #0002}}`;
+function print(items,existingWindow){
+ let w=existingWindow&&!existingWindow.closed?existingWindow:null;
+ try{
+  const list=(Array.isArray(items)?items:[items]).filter(Boolean);
+  if(!list.length)throw Error('Nenhuma entrega selecionada.');
+  const html=list.map(page).join('');
+  if(!w)w=window.open('','_blank');
+  if(!w)throw Error('Permita janelas de impressão para este site.');
+  const doc='<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Etiqueta para impressão 10 x 15 cm</title><style>'+css+'</style></head><body>'+html+'</body></html>';
+  w.document.open();w.document.write(doc);w.document.close();
+  const images=Array.from(w.document.images);
+  let invoked=false;
+  const invoke=()=>{if(invoked||w.closed)return;invoked=true;try{w.focus();w.print()}catch(e){window.alert('Pressione Ctrl+P para imprimir esta etiqueta.')}};
+  Promise.all(images.map(i=>i.complete?Promise.resolve():new Promise(resolve=>{i.onload=resolve;i.onerror=resolve}))).then(()=>setTimeout(invoke,180));
+  setTimeout(invoke,2500);
+  return true;
+ }catch(e){
+  const reason=String(e?.message||e);
+  try{if(w&&!w.closed){w.document.open();w.document.write('<!doctype html><meta charset="utf-8"><title>Impressão não iniciada</title><body style="font:16px Arial;padding:30px"><h2>Não foi possível preparar a etiqueta</h2><p>'+txt(reason)+'</p><p>Volte ao painel para imprimir novamente.</p></body>');w.document.close()}}catch(_){}
+  window.alert('Não foi possível imprimir: '+reason);
+  return false;
+ }
+}
+function attachRows(container,data){
+ const root=document.getElementById(container);if(!root)return;
+ const rows=[...root.querySelectorAll('.row,.order-card,.active-card')];
+ rows.forEach((node,i)=>{if(node.querySelector('[data-velum-label]'))return;const x=data?.[i];if(!x)return;const n=normalize(x);if(!n.code || !n.address || !n.name)return;const b=document.createElement('button');b.type='button';b.textContent='Imprimir etiqueta VELUM 10×15';b.setAttribute('data-velum-label','');b.style.cssText='background:#0f3665;color:#fff;border:0;border-radius:9px;padding:10px 13px;cursor:pointer;font-weight:750;margin-top:10px';b.onclick=()=>print(x);node.appendChild(b)});
+}
+window.VelumLabel={page,print,attachRows,normalize};
+})();</script><script>printLabels=function(items){return VelumLabel.print((Array.isArray(items)?items:[items]).filter(Boolean).map(x=>({...x,callerType:'LUMEN',isLumen:true})))};</script><script id="velumBlingCustomersFeature">
+(()=>{
+const byId=id=>document.getElementById(id);
+let editingCustomerId='';let editingCustomerMode='';
+let customers=[];
+const hideIncomplete=byId('blingHideIncomplete');
+hideIncomplete.onchange=()=>byId('blingCustomerResults').querySelectorAll('[data-client-row]').forEach(row=>{
+ const c=customers.find(x=>String(x.id)===row.dataset.clientRow);
+ row.style.display=hideIncomplete.checked&&c?.canRequestDeletion?'none':'flex';
+});
+byId('openBlingCustomers').onclick=()=>{
+ const box=byId('blingCustomerPanel');box.style.display=box.style.display==='none'?'block':'none';
+ if(box.style.display==='block'){box.scrollIntoView({behavior:'smooth',block:'start'});byId('blingCustomerSearch').focus()}
+};
+function search(){
+ const value=byId('blingCustomerSearch').value.trim();
+ if(value.length<2){byId('blingCustomerFeedback').textContent='Digite pelo menos 2 caracteres.';return}
+ byId('blingCustomerFeedback').textContent='Consultando clientes no Bling...';
+ if(byId('blingSearchMode').value==='order'){if(!/^\d{1,14}$/.test(value)){byId('blingCustomerFeedback').textContent='Informe o número do pedido (somente dígitos).';return;}send('FIND_BLING_ORDER',{number:value});return;}
+ send('SEARCH_BLING_CUSTOMERS',{search:value});
+}
+byId('blingCustomerSearchBtn').onclick=search;
+byId('bcCancel').onclick=()=>{byId('blingCustomerEditor').classList.remove('velum-editing');byId('blingCustomerEditor').style.display='none'};
+byId('bcSave').onclick=()=>{
+ if(!editingCustomerId)return;
+ const changes={};
+ for(const [key,id] of Object.entries({name:'bcName',phone:'bcPhone',address:'bcStreet',number:'bcNumber',neighborhood:'bcNeighborhood',complement:'bcComplement',city:'bcCity',state:'bcState',zip:'bcZip'}))changes[key]=byId(id).value.trim();
+ if(changes.name.length<2){byId('bcFeedback').textContent='Informe o nome.';return}
+ byId('bcSave').disabled=true;byId('bcFeedback').textContent='Salvando no Bling...';
+ send('SAVE_BLING_CUSTOMER',{id:editingCustomerId,changes});
+};
+
+byId('blingCustomerSearch').onkeydown=e=>{if(e.key==='Enter')search()};
+window.addEventListener('message',e=>{
+ const m=e.data||{};if(m.source!=='LUMEN_ADMIN_PANEL_PAGE')return;
+ const d=m.payload||{};
+ if(m.type==='BLING_ORDER_RESULT'){
+   if(!d.ok){byId('blingCustomerFeedback').textContent=d.mensagem||'Pedido não encontrado';return;}
+   const c=d.pedido||{};
+   byId('blingCustomerFeedback').textContent='Pedido '+(c.numero||'')+' encontrado. Confira os dados editáveis antes de gerar etiqueta ou chamar entregador.';
+   const address=[c.address,c.number,c.neighborhood,c.complement].filter(Boolean).join(', ');
+   for(const [id,value] of [['customerName',c.buyerName],['customerPhone',c.buyerPhone],['deliveryAddress',address],['deliveryZipCode',c.zip],['deliveryCity',c.city],['deliveryState',c.state]]){const field=byId(id);if(field)field.value=value||'';}
+   byId('blingCustomerPanel').style.display='none';byId('callBox').classList.add('on');byId('callBox').scrollIntoView({behavior:'smooth',block:'start'});
+ }
+ if(m.type==='BLING_CUSTOMERS_RESULT'){
+  customers=Array.isArray(d.items)?d.items.filter(c=>c&&typeof c==='object').map(c=>({...c,id:String(c.id||''),name:String(c.name||'Cliente sem nome')})):[];
+  byId('blingCustomerFeedback').textContent=d.ok?(customers.length+' cliente(s) encontrado(s)'+(d.limited?' • pesquise um termo mais específico para ver outros resultados':'')):(d.mensagem||'Erro no Bling');
+  if(!d.ok && /403|higher privileges|permiss/i.test(String(d.mensagem||''))){
+    byId('blingCustomerFeedback').textContent='O Bling bloqueou a leitura de contatos (HTTP 403). Habilite o acesso de leitura de contatos no aplicativo Bling e autorize a conexão novamente.';
+    byId('blingCustomerResults').innerHTML='<a href="https://www.vaidevelum.com/_functions/blingConnect" target="_blank" rel="noopener" style="display:inline-block;background:#153861;color:white;border-radius:10px;padding:13px 15px;font-weight:800;text-decoration:none">Reconectar Bling após ajustar permissões</a><p style="font-size:12px;color:#64748b">Alterar os escopos pode revogar o acesso anterior. Reconecte somente depois de salvar as permissões no Bling.</p>';
+    return;
+  }
+  const resultsBox=byId('blingCustomerResults');
+  resultsBox.replaceChildren();
+  for(const c of customers){
+    const row=document.createElement('div');
+    row.dataset.clientRow=String(c.id);
+    row.style.cssText='border:1px solid #dce4ee;border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap';
+    const details=document.createElement('div');
+    const name=document.createElement('strong');name.textContent=c.name;
+    const info=document.createElement('div');info.style.cssText='color:#61738b;font-size:12px;margin-top:3px';
+    info.textContent=[c.phone,c.cpfMasked?'CPF '+c.cpfMasked:''].filter(Boolean).join(' • ');
+    details.append(name,info);
+    const actions=document.createElement('div');actions.style.cssText='display:flex;gap:8px;flex-wrap:wrap';
+    const delivery=document.createElement('button');delivery.type='button';delivery.dataset.clientId=c.id;delivery.textContent='Gerar etiqueta / chamar';delivery.style.cssText='background:#102f59;color:#fff;border:0;border-radius:9px;padding:10px;font-weight:700;cursor:pointer';
+    const edit=document.createElement('button');edit.type='button';edit.dataset.editClient=c.id;edit.textContent='Editar cadastro';edit.style.cssText='border:1px solid #14355e;background:#fff;color:#14355e;border-radius:9px;padding:10px;font-weight:700;cursor:pointer';
+    actions.append(delivery,edit);row.append(details,actions);resultsBox.appendChild(row);
+  }
+  resultsBox.style.display='grid';
+  if(!customers.length&&d.ok){resultsBox.textContent='Nenhum cliente encontrado para esta pesquisa.';}
+  hideIncomplete.onchange();
+  byId('blingCustomerResults').querySelectorAll('[data-edit-client]').forEach(b=>b.onclick=()=>{editingCustomerMode='edit';byId('blingCustomerFeedback').textContent='Carregando cadastro para edição...';send('GET_BLING_CUSTOMER',{id:b.dataset.editClient})});
+  byId('blingCustomerResults').querySelectorAll('[data-client-id]').forEach(b=>b.onclick=()=>{byId('blingCustomerFeedback').textContent='Carregando dados do cliente...';editingCustomerMode='delivery';send('GET_BLING_CUSTOMER',{id:b.dataset.clientId})});
+ }
+ if(m.type==='BLING_CUSTOMER_SAVE_RESULT'){
+   byId('bcSave').disabled=false;byId('bcFeedback').textContent=d.mensagem||'Não foi possível salvar.';
+   if(d.ok){byId('blingCustomerEditor').classList.remove('velum-editing');byId('blingCustomerEditor').style.display='none';byId('blingCustomerSearchBtn').click();}
+ }
+ if(m.type==='BLING_CUSTOMER_DETAIL'){
+  if(!d.ok){byId('blingCustomerFeedback').textContent=d.mensagem||'Cliente indisponível';return}
+  if(editingCustomerMode==='edit'){
+    const c=d.client||{};editingCustomerId=c.id;
+    for(const [id,val] of [['bcName',c.name],['bcPhone',c.phone],['bcStreet',c.address],['bcNumber',c.number],['bcNeighborhood',c.neighborhood],['bcComplement',c.complement],['bcCity',c.city],['bcState',c.state],['bcZip',c.zip]])byId(id).value=val||'';
+    byId('blingCustomerEditor').classList.add('velum-editing');byId('blingCustomerEditor').style.display='block';byId('blingCustomerEditor').scrollIntoView({behavior:'smooth',block:'center'});return;
+  }
+  const c=d.client||{},address=[c.address,c.number,c.neighborhood].filter(Boolean).join(', ');
+  for(const [id,value] of [['customerName',c.name],['customerPhone',c.phone],['deliveryAddress',address],['deliveryZipCode',c.zip],['deliveryCity',c.city],['deliveryState',c.state]]){const field=byId(id);if(field)field.value=value||''}
+  const extra=byId('deliveryInstructions');if(extra&&c.complement)extra.value=[extra.value,'Complemento: '+c.complement].filter(Boolean).join(' | ');
+  byId('blingCustomerFeedback').textContent='Cliente carregado. Confira e edite os dados antes de calcular o frete e gerar a etiqueta.';
+  byId('blingCustomerPanel').style.display='none';byId('callBox').classList.add('on');byId('callBox').scrollIntoView({behavior:'smooth',block:'start'});
+ }
+});
+})();
+</script><script>
+document.querySelectorAll('[data-panel-target]').forEach(button=>button.addEventListener('click',()=>{
+const target=button.dataset.panelTarget;
+const sections={bling:'blingCustomerSection',tracking:'activeList',call:'callBox',pickup:'pickupBox'};
+if(target==='bling')document.getElementById('blingCustomerPanel').style.display='block';
+if(target==='call')document.getElementById('call').click();
+if(target==='pickup')document.getElementById('createPickupOpen').click();
+const section=document.getElementById(sections[target]);
+if(section)section.scrollIntoView({behavior:'smooth',block:'start'});
+else window.scrollTo({top:0,behavior:'smooth'});
+}));
+</script></body></html>
