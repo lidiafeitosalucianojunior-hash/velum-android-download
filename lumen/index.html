@@ -209,7 +209,7 @@ $('call').onclick=()=>{$('callBox').classList.toggle('on');if($('callBox').class
 $('customerPickupAtCenter').onchange=()=>{if($('customerPickupAtCenter').checked)currentFee=0;$('review').classList.remove('on');$('calc').closest('.form-actions').style.display='grid'};
 $('addStop').onclick=()=>{stops.push({name:'Casa de Ximba',address:'Rua Pedro Pereira de Lucena, 515',city:'Brejo Santo',state:'CE',zipCode:'63260-000',hasFee:false,fee:0});renderStops();$('logisticsStopCard').scrollIntoView({behavior:'smooth',block:'start'})};
 $('deliveryAddress').oninput=()=>{clearTimeout(suggestTimer);const term=$('deliveryAddress').value.trim();if(term.length<3){$('deliverySuggestions').classList.remove('on');return}suggestTimer=setTimeout(()=>send('SUGGEST_ADDRESS',{term,target:'delivery'}),350)};
-$('calc').onclick=()=>{clearNotice();currentFee=0;$('calc').disabled=true;$('calc').textContent='CALCULANDO...';send('CALCULATE',payload())};
+$('calc').onclick=()=>{clearNotice();currentFee=0;$('calc').disabled=true;$('calc').textContent='CALCULANDO...';send('CALCULATE',payload());setTimeout(()=>{if(document.getElementById('calc').disabled){document.getElementById('calc').disabled=false;document.getElementById('calc').textContent='CALCULAR ENTREGA';notice('Sem resposta do servidor para o cálculo de frete.',false)}},16000)};
 $('editRoute').onclick=()=>{$('review').classList.remove('on');$('calc').closest('.form-actions').style.display='grid';$('readyConfirm').checked=false;$('create').disabled=true};
 $('cancelRoute').onclick=()=>{currentFee=0;resetEditMode();$('review').classList.remove('on');$('calc').closest('.form-actions').style.display='grid';clearNotice()};
 $('readyConfirm').onchange=()=>{$('create').disabled=!$('readyConfirm').checked};
