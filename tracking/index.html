@@ -120,7 +120,7 @@ function render(t){
       document.getElementById('confirmPickupReceived').onclick=()=>{
         if(!window.confirm('Você já recebeu a encomenda fisicamente? Confirmar encerra esta retirada.'))return;
         document.getElementById('confirmPickupReceived').disabled=true;
-        param($m) send('CONFIRM_CUSTOMER_PICKUP',{code:''});
+        send('CONFIRM_CUSTOMER_PICKUP',{code:''});
       };
       const topCard=document.querySelector('#content > .card');
       if(topCard){
