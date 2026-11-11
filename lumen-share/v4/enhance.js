@@ -22,7 +22,7 @@
  const one=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text)el.textContent=text;return el;};
  const photoUrl=(p,edge=2400)=>'https://static.wixstatic.com/media/'+encodeURIComponent(p[2])+'/v1/fit/w_'+edge+',h_'+edge+',q_100/file.jpg';
  const sku=p=>'REF '+String(p[1]||'').slice(0,32);
- const filename=p=>'LUMEN-REF-'+String(p[1]).replace(/[^a-z0-9_-]/gi,'')+'-9x16.jpg';
+ const filename=p=>'REF-'+String(p[1]).replace(/[^a-z0-9_-]/gi,'')+'-9x16.jpg';
  const keysOf=s=>{
   const v=String(s||'');
   const out=[];
@@ -107,7 +107,7 @@
   ctx.drawImage(original,(width-w)/2,55*scale+(regionH-h)/2,w,h);
   // A imagem de divulgação contém SOMENTE a referência e os tamanhos.
   // Não carimbar marca, nome da loja nem outras informações comerciais.
-  const sizes=Array.isArray(p[3])?p[3].filter(x=>/^(3[3-9]|4[0-5])$/.test(String(x))).slice(0,13):[];
+  const sizes=Array.isArray(p[3])?[...new Set(p[3].map(String).filter(x=>/^(3[3-9]|4[0-5])$/.test(x)))].sort((a,b)=>Number(a)-Number(b)).slice(0,13):[];
   ctx.fillStyle='#69543d';ctx.textAlign='left';
   ctx.font='bold 41px Arial,sans-serif';
   ctx.fillText(sku(p),70*scale,2378*scale);
