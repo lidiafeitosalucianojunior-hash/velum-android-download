@@ -413,6 +413,7 @@
    allReady?'↗ Compartilhar '+batch.length+' fotos · '+start+'–'+end+'/'+products.length:
    'Preparando '+batch.length+' fotos...';
   if(bulkButton.textContent!==label)bulkButton.textContent=label;
+  positionBulk();
   bulkButton.disabled=!allReady&&!failures.length;
   const key=batch.map(p=>p[2]).join('|');
   if(!allReady&&!failures.length&&preparingKey!==key){
