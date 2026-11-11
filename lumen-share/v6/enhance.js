@@ -122,6 +122,7 @@
  }
 
  const readyFiles=new Map(),filePromises=new Map(),badFiles=new Set();
+ const fileQueue=[];let fileWorkers=0;
  let shareInProgress=false,lastShareAt=0,visibleTimer=0;
  function capCache(map,limit){
   while(map.size>limit)map.delete(map.keys().next().value);
@@ -134,18 +135,27 @@
   }
   return imageCache.get(key);
  }
+ function pumpPhotos(){
+  while(fileWorkers<2&&fileQueue.length){
+   const task=fileQueue.shift();fileWorkers++;
+   cachedPhoto(task.p).then(blob=>{
+    const file=new File([blob],filename(task.p),{type:'image/jpeg'});
+    readyFiles.set(task.key,file);capCache(readyFiles,18);
+    task.resolve(file);
+   }).catch(e=>{badFiles.add(task.key);task.reject(e)})
+    .finally(()=>{filePromises.delete(task.key);fileWorkers--;pumpPhotos();});
+  }
+ }
  function warmFile(p){
   const key=String(p[2]);
   if(readyFiles.has(key))return Promise.resolve(readyFiles.get(key));
   if(filePromises.has(key))return filePromises.get(key);
   if(badFiles.has(key))return Promise.reject(new Error('FOTO_INDISPONIVEL'));
-  const task=cachedPhoto(p).then(blob=>{
-   const file=new File([blob],filename(p),{type:'image/jpeg'});
-   readyFiles.set(key,file);capCache(readyFiles,18);
-   filePromises.delete(key);
-   return file;
-  }).catch(e=>{filePromises.delete(key);badFiles.add(key);throw e});
+  const task=new Promise((resolve,reject)=>{
+   fileQueue.push({key,p,resolve,reject});
+  });
   filePromises.set(key,task);
+  pumpPhotos();
   return task;
  }
  function notice(msg){
@@ -347,23 +357,19 @@
   if(bulkOffset>=products.length)bulkOffset=0;
   const batch=products.slice(bulkOffset,bulkOffset+BULK_SIZE);
   const allReady=batch.every(p=>readyFiles.has(String(p[2])));
+  const failures=batch.filter(p=>badFiles.has(String(p[2])));
   const start=bulkOffset+1,end=bulkOffset+batch.length;
-  const label=allReady?
-   '↗ Compartilhar '+batch.length+' fotos ('+start+'–'+end+' de '+products.length+')':
+  const label=failures.length?
+   '↻ Tentar preparar '+failures.length+' foto(s)':
+   allReady?'↗ Compartilhar '+batch.length+' fotos ('+start+'–'+end+' de '+products.length+')':
    'Preparando '+batch.length+' fotos do filtro...';
   if(bulkButton.textContent!==label)bulkButton.textContent=label;
-  bulkButton.disabled=!allReady;
+  bulkButton.disabled=!allReady&&!failures.length;
   const key=batch.map(p=>p[2]).join('|');
-  if(!allReady&&preparingKey!==key){
+  if(!allReady&&!failures.length&&preparingKey!==key){
    preparingKey=key;
    Promise.allSettled(batch.map(warmFile)).then(()=>{
     preparingKey='';
-    // Se alguma foto falhar, habilita a tentativa, sem enviar item errado.
-    const unavailable=batch.filter(p=>badFiles.has(String(p[2])));
-    if(unavailable.length){
-      for(const p of unavailable)badFiles.delete(String(p[2]));
-      notice('Algumas fotos não puderam ser preparadas. Tente aplicar o filtro novamente.');
-    }
     refreshBulk();
    });
   }
@@ -372,6 +378,11 @@
   const products=getFilteredResults();
   const batch=products.slice(bulkOffset,bulkOffset+BULK_SIZE);
   if(!batch.length)return;
+  const failed=batch.filter(p=>badFiles.has(String(p[2])));
+  if(failed.length){
+   for(const p of failed)badFiles.delete(String(p[2]));
+   preparingKey='';refreshBulk();return;
+  }
   const files=batch.map(p=>readyFiles.get(String(p[2])));
   if(files.some(x=>!x)){refreshBulk();return;}
   // Alguns aparelhos limitam quantos arquivos podem ser compartilhados.
@@ -402,7 +413,7 @@
   const target=event.target;
   if(!target||!target.closest)return;
   const el=target.closest('button,[role="button"],a,option,div,span,label')||target;
-  const value=String(el.textContent||'').trim();
+  const value=String(event.type==='change'?(target.value||el.textContent):(el.textContent||'')).trim();
   const heading=[...document.querySelectorAll('h1,h2,h3,h4')].find(x=>
     /confira as novidades/i.test(x.textContent||''));
   const top=heading?.getBoundingClientRect().top??innerHeight;
