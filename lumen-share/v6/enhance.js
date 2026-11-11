@@ -105,14 +105,15 @@
   ctx.drawImage(original,(width-dw)/2,(height-dh)/2,dw,dh);
   const sizes=Array.isArray(p[3])?[...new Set(p[3].map(String)
    .filter(x=>/^(3[3-9]|4[0-5])$/.test(x)))].sort((a,b)=>Number(a)-Number(b)).slice(0,13):[];
-  // Tipografia pequena diretamente sobre a foto, protegida por sombra.
+  // Legenda discreta na área segura dos Stories: só SKU e tamanhos.
+  // Sombra marrom suave para leitura mesmo sobre fotos muito claras.
   ctx.fillStyle='#ffffff';ctx.textAlign='left';ctx.textBaseline='alphabetic';
-  ctx.shadowColor='rgba(0,0,0,.85)';ctx.shadowBlur=10;
+  ctx.shadowColor='rgba(89,54,31,.62)';ctx.shadowBlur=9;
   ctx.shadowOffsetX=1;ctx.shadowOffsetY=2;
-  ctx.font='600 34px Arial,sans-serif';ctx.fillText(sku(p),48,2452);
+  ctx.font='600 35px Arial,sans-serif';ctx.fillText(sku(p),48,2120);
   if(sizes.length){
-   ctx.font='26px Arial,sans-serif';
-   ctx.fillText('NUMERAÇÕES  '+sizes.join('  •  '),48,2503);
+   ctx.font='500 31px Arial,sans-serif';
+   ctx.fillText('NUMERAÇÕES  '+sizes.join('  •  '),48,2175);
   }
   ctx.shadowColor='transparent';ctx.shadowBlur=0;
   const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.97));
