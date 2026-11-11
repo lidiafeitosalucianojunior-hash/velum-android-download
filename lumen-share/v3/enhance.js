@@ -126,8 +126,10 @@
  async function nativeShare(blob,p){
   if(!navigator.share||typeof File==='undefined')return false;
   const file=new File([blob],filename(p),{type:'image/jpeg'});
-  if(navigator.canShare&&!navigator.canShare({files:[file]}))return false;
-  try{await navigator.share({files:[file],title:String(p[0]),text:String(p[0])+' • '+sku(p)});return true;}
+  try{
+   if(navigator.canShare&&!navigator.canShare({files:[file]}))return false;
+   await navigator.share({files:[file],title:String(p[0]),text:String(p[0])+' • '+sku(p)});return true;
+  }
   catch(e){return e?.name==='AbortError';}
  }
  function openDialog(p){
@@ -204,8 +206,14 @@
    if(!visible)continue;
    c.save.style.left=Math.max(4,Math.min(innerWidth-105,r.right-106))+'px';
    c.save.style.top=Math.max(5,Math.min(innerHeight-28,r.bottom-37))+'px';
-   const share=findShare(getContainer(img,c.p),img);
-   const s=share?.getBoundingClientRect();
+   const now=Date.now();
+   if(!c.share||!c.share.isConnected){
+    if(!c.lastShareTry||now-c.lastShareTry>3500){
+     c.lastShareTry=now;
+     c.share=findShare(getContainer(img,c.p),img);
+    }
+   }
+   const s=c.share?.getBoundingClientRect();
    const at=s&&s.top>r.bottom-8&&s.top<r.bottom+650&&s.height<80?
     {x:s.left-79,y:s.top+s.height/2-10}:{x:r.left+2,y:r.bottom+5};
    c.ref.style.left=Math.max(3,Math.min(innerWidth-84,at.x))+'px';
@@ -227,8 +235,13 @@
  function schedule(){if(scheduled)return;scheduled=true;setTimeout(scan,220);}
  const observer=new MutationObserver(schedule);
  observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['src','srcset','style']});
- document.addEventListener('scroll',draw,{passive:true,capture:true});
- window.addEventListener('resize',draw,{passive:true});
+ let drawQueued=false;
+ const scheduleDraw=()=>{
+  if(drawQueued)return;drawQueued=true;
+  requestAnimationFrame(()=>{drawQueued=false;draw();});
+ };
+ document.addEventListener('scroll',scheduleDraw,{passive:true,capture:true});
+ window.addEventListener('resize',scheduleDraw,{passive:true});
  document.addEventListener('load',schedule,true);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule();});
  const tryInit=()=>schedule();
