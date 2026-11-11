@@ -199,6 +199,19 @@
   const mid=(photo.left+photo.right)/2;
   const selectors='svg,[aria-label],[title],[data-testid],[data-hook],button,[role="button"]';
   const nodes=Array.from(card.querySelectorAll(selectors)).filter(isShareIcon);
+  // O Wix pode desenhar Compartilhar como SVG sem nome acessível ou círculos.
+  // Nesse caso, localizá-lo geometricamente ABAIXO do botão WhatsApp.
+  const whats=findWhatsapp(card);
+  if(!nodes.length&&whats){
+   const box=whats.getBoundingClientRect();
+   for(const svg of card.querySelectorAll('svg')){
+    const b=svg.getBoundingClientRect();
+    const cx=(b.left+b.right)/2;
+    if(b.width>=10&&b.width<=70&&b.height>=10&&b.height<=70&&
+     b.top>=box.bottom+6&&b.top<=box.bottom+170&&
+     Math.abs(cx-mid)<=photo.width*.43)nodes.push(svg);
+   }
+  }
   let selected=null,best=Infinity;
   for(const el of nodes){
    if(el.contains(img))continue;
