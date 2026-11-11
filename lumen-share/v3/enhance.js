@@ -90,6 +90,10 @@
   for(const size of [2400,1800,1200]){
    try{original=await loadPhoto(photoUrl(p,size));break;}catch(e){lastError=e;}
   }
+  if(!original){
+   try{original=await loadPhoto('https://static.wixstatic.com/media/'+encodeURIComponent(p[2]));}
+   catch(e){lastError=e;}
+  }
   if(!original)throw lastError||new Error('Foto indisponivel');
   const width=1440,height=2560,scale=width/1440;
   const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
@@ -220,6 +224,36 @@
    c.ref.style.top=Math.max(0,Math.min(innerHeight-23,at.y))+'px';
   }
  }
+ // Delegado para Safari: Wix pode envolver a imagem em uma camada
+ // transparente que intercepta o toque antes do elemento <img>.
+ let delegatedTimer=0,delegatedX=0,delegatedY=0;
+ const clearDelegated=()=>{
+  if(delegatedTimer){clearTimeout(delegatedTimer);delegatedTimer=0;}
+ };
+ const eventPhoto=event=>{
+  const target=event.target;
+  if(!target||!target.closest)return null;
+  const direct=target.closest('img');
+  if(direct&&getProduct(direct))return {img:direct,p:getProduct(direct)};
+  const wrapper=target.closest('wix-image,[data-testid*="image"],[class*="image"]');
+  if(!wrapper)return null;
+  const im=wrapper.querySelector('img');
+  if(im&&getProduct(im))return {img:im,p:getProduct(im)};
+  return null;
+ };
+ document.addEventListener('touchstart',e=>{
+  if(e.touches.length!==1||e.target?.closest?.('button,[role="button"]'))return;
+  const photo=eventPhoto(e);if(!photo)return;
+  clearDelegated();
+  delegatedX=e.touches[0].clientX;delegatedY=e.touches[0].clientY;
+  delegatedTimer=setTimeout(()=>{delegatedTimer=0;openDialog(photo.p);},640);
+ },{capture:true,passive:true});
+ document.addEventListener('touchmove',e=>{
+  const t=e.touches[0];if(!t||Math.abs(t.clientX-delegatedX)>14||
+   Math.abs(t.clientY-delegatedY)>14)clearDelegated();
+ },{capture:true,passive:true});
+ document.addEventListener('touchend',clearDelegated,{capture:true,passive:true});
+ document.addEventListener('touchcancel',clearDelegated,{capture:true,passive:true});
  let scheduled=false;
  function scan(){
   scheduled=false;
