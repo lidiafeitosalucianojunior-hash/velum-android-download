@@ -109,7 +109,7 @@
     if(!await share(blob,p))preview(blob,p);
    }catch(_){
     bypass=true;
-    try{btn.click();}finally{bypass=false;}
+    try{btn.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true}));}finally{bypass=false;}
    }
   },true);
  }
