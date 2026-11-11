@@ -3,7 +3,7 @@
  if (window.__LUMEN_SKU_SHARE_V2 || !/(\.|^)lumenluxos\.com$/i.test(location.hostname)) return;
  window.__LUMEN_SKU_SHARE_V2 = true;
  const manifestUrl = 'https://raw.githubusercontent.com/lidiafeitosalucianojunior-hash/velum-android-download/main/lumen-share/v2/catalog.json';
- const media = new Map(), attached = new WeakSet(), pairs = [];
+ const media = new Map(), attached = new WeakSet(), shareBound = new WeakSet(), pairs = [];
  const css = document.createElement('style');
  css.textContent = '.lumen-sku-tag{position:fixed;z-index:2147480000;pointer-events:none;color:#69523b;font:600 11px Arial,sans-serif;letter-spacing:.04em;background:#fffdf9e6;border:1px solid #c5b69e;border-radius:5px;padding:3px 6px;white-space:nowrap}.lumen-save-mask{position:fixed;inset:0;z-index:2147483000;background:#000b;display:grid;place-items:center;padding:20px}.lumen-save-panel{width:min(420px,95vw);max-height:94dvh;overflow:auto;background:#fffaf5;border-radius:14px;padding:14px;color:#58432f;font:14px Arial,sans-serif;box-shadow:0 20px 60px #0005}.lumen-save-panel img{display:block;max-width:100%;max-height:62dvh;margin:6px auto;object-fit:contain}.lumen-save-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}.lumen-save-actions button{padding:10px 14px;border:1px solid #a48b68;border-radius:8px;background:#553f28;color:white;font:600 13px Arial,sans-serif}.lumen-save-actions button:last-child{background:white;color:#553f28}';
  document.head.appendChild(css);
@@ -83,8 +83,9 @@
   return chosen;
  }
  function install(img,p,btn){
-  if(attached.has(img))return;attached.add(img);
-  img.style.webkitTouchCallout='none';
+  if(!attached.has(img)){
+   attached.add(img);
+   img.style.webkitTouchCallout='none';
   let timer=null;
   function clear(){if(timer!==null){clearTimeout(timer);timer=null;}}
   img.addEventListener('pointerdown',function(e){
@@ -94,8 +95,10 @@
    },650);
   },{passive:true});
   ['pointerup','pointercancel','pointerleave','dragstart'].forEach(x=>img.addEventListener(x,clear,{passive:true}));
-  img.addEventListener('contextmenu',function(e){e.preventDefault();});
-  if(!btn)return;
+   img.addEventListener('contextmenu',function(e){e.preventDefault();});
+  }
+  if(!btn||shareBound.has(img))return;
+  shareBound.add(img);
   const badge=document.createElement('span');badge.className='lumen-sku-tag';badge.textContent=skuText(p);
   document.body.appendChild(badge);pairs.push({img,btn,badge});
   if(btn.dataset.lumenShareEnhanced==='v2')return;
@@ -131,7 +134,6 @@
   if(!media.size)return;
   const candidates=shareCandidates();
   for(const img of document.querySelectorAll('img')){
-   if(attached.has(img))continue;
    const id=mediaKey(img.currentSrc||img.src||img.getAttribute('data-src')||'');
    const p=media.get(id);
    if(!p)continue;
