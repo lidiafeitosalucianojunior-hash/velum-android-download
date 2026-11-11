@@ -368,8 +368,23 @@
   valid.sort((a,b)=>(b.getBoundingClientRect().bottom-a.getBoundingClientRect().bottom));
   const heading=valid[0];
   if(!heading)return;
-  const hr=heading.getBoundingClientRect();
   const height=bulkButton.offsetHeight||24;
+  // No Wix, o dropdown é a linha 3 e o título a linha 4 do mesmo grid.
+  // Em alguns filtros há somente 9px entre eles. Ampliar APENAS essa margem,
+  // deslocando título e produtos juntos, para não cobrir nenhum componente.
+  const dropdown=document.querySelector('select.wixui-dropdown__input')?.closest('.wixui-dropdown');
+  if(dropdown){
+   const dr=dropdown.getBoundingClientRect();
+   const before=heading.getBoundingClientRect();
+   const gap=before.top-dr.bottom;
+   const needed=Math.max(33,height+10);
+   if(gap<needed&&dropdown.dataset.lumenBulkGap!=='expanded'){
+    const current=parseFloat(getComputedStyle(dropdown).marginBottom)||0;
+    dropdown.style.marginBottom=Math.ceil(current+needed-gap)+'px';
+    dropdown.dataset.lumenBulkGap='expanded';
+   }
+  }
+  const hr=heading.getBoundingClientRect();
   const centerX=hr.left+hr.width/2;
   const left=Math.round(Math.max(6,Math.min(innerWidth-bulkButton.offsetWidth-6,centerX-bulkButton.offsetWidth/2)));
   // A distância visual até o título é pequena: botão fino, margem 5px.
