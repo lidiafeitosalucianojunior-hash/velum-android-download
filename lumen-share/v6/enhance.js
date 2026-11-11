@@ -16,7 +16,7 @@
  const state={ready:true,matched:0,controls:0,lastError:null};
  ROOT.__lumenShareV6=state;
  if(!media.size){state.lastError='catalogo_embutido_vazio';return;}
- const style=document.createElement('style');style.textContent=".lumen-v6-ref{position:absolute!important;pointer-events:none!important;display:block!important;z-index:3!important;color:#7e6c5b!important;background:transparent!important;font:500 10px/1.1 Arial,sans-serif!important;white-space:nowrap!important;letter-spacing:.015em!important;padding:0!important;margin:0!important;border:0!important;box-shadow:none!important;transform:none!important}.lumen-v6-notice{position:fixed;bottom:112px;left:14px;right:14px;z-index:2147483200;border-radius:12px;background:#443423;color:#fff;padding:12px;text-align:center;font:12px/1.35 Arial,sans-serif;box-shadow:0 4px 14px #0004;pointer-events:none}.lumen-v6-bulk{position:fixed;bottom:91px;left:50%;transform:translateX(-50%);z-index:2147482000;max-width:calc(100vw - 28px);width:max-content;min-height:43px;border-radius:24px;background:#fffaf4;color:#57432e;border:1px solid #b5a28b;box-shadow:0 3px 12px #0003;padding:9px 17px;font:600 12px/1.3 Arial,sans-serif;white-space:normal;text-align:center;touch-action:manipulation}.lumen-v6-bulk:disabled{opacity:.76}.lumen-v6-bulk[hidden]{display:none!important}";document.head.appendChild(style);
+ const style=document.createElement('style');style.textContent=".lumen-v6-ref{position:absolute!important;pointer-events:none!important;display:block!important;z-index:3!important;color:#7e6c5b!important;background:transparent!important;font:500 10px/1.1 Arial,sans-serif!important;white-space:nowrap!important;letter-spacing:.015em!important;padding:0!important;margin:0!important;border:0!important;box-shadow:none!important;transform:none!important}.lumen-v6-notice{position:fixed;bottom:112px;left:14px;right:14px;z-index:2147483200;border-radius:12px;background:#443423;color:#fff;padding:12px;text-align:center;font:12px/1.35 Arial,sans-serif;box-shadow:0 4px 14px #0004;pointer-events:none}.lumen-v6-bulk{position:absolute;top:0;left:0;right:auto;bottom:auto;transform:none;z-index:40;max-width:calc(100vw - 28px);width:max-content;min-height:0;border-radius:13px;background:#fffdf9;color:#79644d;border:1px solid #dfd3c5;box-shadow:none;padding:4px 10px;font:500 10px/1.3 Arial,sans-serif;white-space:nowrap;text-align:center;touch-action:manipulation}.lumen-v6-bulk:disabled{opacity:.76}.lumen-v6-bulk[hidden]{display:none!important}";document.head.appendChild(style);
  const one=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text)el.textContent=text;return el;};
  const photoUrl=(p,edge=2400)=>'https://static.wixstatic.com/media/'+encodeURIComponent(p[2])+'/v1/fit/w_'+edge+',h_'+edge+',q_100/file.jpg';
  const sku=p=>'REF '+String(p[1]||'').slice(0,32);
@@ -317,7 +317,7 @@
    }
   }
  }
- const BULK_SIZE=6;
+ const BULK_SIZE=10;
  let activeFilter=false,selectedSize='',selectedCategory='',bulkOffset=0,lastSet='',bulkBar=null,bulkButton=null,preparingKey='';
  function getFilteredResults(){
   const result=[],seen=new Set();
@@ -342,8 +342,41 @@
    bulkBar.appendChild(bulkButton);
    document.body.appendChild(bulkBar);
    bulkButton.addEventListener('click',shareBatch);
+   bulkBar.style.position='static';
   }
   refreshBulk();
+ }
+ // O botão fica no fluxo visual ENTRE os filtros e o título,
+ // sem se sobrepor aos produtos e sem acompanhar o scroll como elemento fixo.
+ function positionBulk(){
+  if(!bulkButton||bulkButton.hidden)return;
+  const rects=[];
+  for(const [img,entry] of badges){
+   if(!img.isConnected||!entry.card?.isConnected)continue;
+   const r=img.getBoundingClientRect();
+   if(r.width>=60&&r.height>=80)rects.push(r.top+scrollY);
+  }
+  if(!rects.length)return;
+  const firstTop=Math.min(...rects);
+  const heads=[...document.querySelectorAll('h1,h2,h3,h4,h5,h6,[role="heading"],[data-testid="richTextElement"]')];
+  const valid=heads.filter(el=>{
+   const r=el.getBoundingClientRect(),txt=String(el.innerText||el.textContent||'').trim();
+   const bottom=r.bottom+scrollY;
+   return r.width>60&&r.height>12&&r.height<100&&txt.length>2&&txt.length<70&&
+    bottom<=firstTop-8&&firstTop-bottom<240;
+  });
+  valid.sort((a,b)=>(b.getBoundingClientRect().bottom-a.getBoundingClientRect().bottom));
+  const heading=valid[0];
+  if(!heading)return;
+  const hr=heading.getBoundingClientRect();
+  const height=bulkButton.offsetHeight||24;
+  const centerX=hr.left+hr.width/2;
+  const left=Math.round(Math.max(6,Math.min(innerWidth-bulkButton.offsetWidth-6,centerX-bulkButton.offsetWidth/2)));
+  // A distância visual até o título é pequena: botão fino, margem 5px.
+  const top=Math.round(hr.top+scrollY-height-6);
+  const xpos=left+'px',ypos=Math.max(0,top)+'px';
+  if(bulkButton.style.left!==xpos)bulkButton.style.left=xpos;
+  if(bulkButton.style.top!==ypos)bulkButton.style.top=ypos;
  }
  function refreshBulk(){
   if(!bulkButton)return;
@@ -354,15 +387,16 @@
   }
   bulkButton.hidden=products.length<2;
   if(products.length<2)return;
+  positionBulk();
   if(bulkOffset>=products.length)bulkOffset=0;
   const batch=products.slice(bulkOffset,bulkOffset+BULK_SIZE);
   const allReady=batch.every(p=>readyFiles.has(String(p[2])));
   const failures=batch.filter(p=>badFiles.has(String(p[2])));
   const start=bulkOffset+1,end=bulkOffset+batch.length;
   const label=failures.length?
-   '↻ Tentar preparar '+failures.length+' foto(s)':
-   allReady?'↗ Compartilhar '+batch.length+' fotos ('+start+'–'+end+' de '+products.length+')':
-   'Preparando '+batch.length+' fotos do filtro...';
+   '↻ Preparar novamente '+failures.length+' foto(s)':
+   allReady?'↗ Compartilhar '+batch.length+' fotos · '+start+'–'+end+'/'+products.length:
+   'Preparando '+batch.length+' fotos...';
   if(bulkButton.textContent!==label)bulkButton.textContent=label;
   bulkButton.disabled=!allReady&&!failures.length;
   const key=batch.map(p=>p[2]).join('|');
@@ -450,7 +484,7 @@
  let drawQueued=false;
  function scheduleDraw(){
   if(drawQueued)return;drawQueued=true;
-  requestAnimationFrame(()=>{drawQueued=false;draw();warmVisible();});
+  requestAnimationFrame(()=>{drawQueued=false;draw();warmVisible();positionBulk();});
  }
  document.addEventListener('scroll',scheduleDraw,{capture:true,passive:true});
  window.addEventListener('resize',scheduleDraw,{passive:true});
