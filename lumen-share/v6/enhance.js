@@ -438,9 +438,9 @@
   const failures=batch.filter(p=>badFiles.has(String(p[2])));
   const start=bulkOffset+1,end=bulkOffset+batch.length;
   const label=failures.length?
-   '↻ Preparar novamente '+failures.length+' foto(s)':
+   '↻ Preparar novamente '+failures.length+' foto(s) · '+start+'–'+end+'/'+products.length:
    allReady?'↗ Compartilhar '+batch.length+' fotos · '+start+'–'+end+'/'+products.length:
-   'Preparando '+batch.length+' fotos...';
+   'Preparando '+batch.length+' fotos · '+start+'–'+end+'/'+products.length+'...';
   if(bulkButton.textContent!==label)bulkButton.textContent=label;
   positionBulk();
   bulkButton.disabled=!allReady&&!failures.length;
