@@ -105,15 +105,20 @@
   ctx.drawImage(original,(width-dw)/2,(height-dh)/2,dw,dh);
   const sizes=Array.isArray(p[3])?[...new Set(p[3].map(String)
    .filter(x=>/^(3[3-9]|4[0-5])$/.test(x)))].sort((a,b)=>Number(a)-Number(b)).slice(0,13):[];
-  // Legenda discreta na área segura dos Stories: só SKU e tamanhos.
-  // Sombra marrom suave para leitura mesmo sobre fotos muito claras.
+  // Texto em área segura do Story, levemente mais baixo e sem molduras.
+  // Contorno marrom fino preserva a leitura sobre fundo claro.
   ctx.fillStyle='#ffffff';ctx.textAlign='left';ctx.textBaseline='alphabetic';
-  ctx.shadowColor='rgba(89,54,31,.62)';ctx.shadowBlur=9;
+  ctx.shadowColor='rgba(89,54,31,.42)';ctx.shadowBlur=6;
   ctx.shadowOffsetX=1;ctx.shadowOffsetY=2;
-  ctx.font='600 35px Arial,sans-serif';ctx.fillText(sku(p),48,2120);
+  ctx.strokeStyle='rgba(91,53,31,.80)';ctx.lineWidth=2;
+  ctx.lineJoin='round';
+  const refText=sku(p);
+  ctx.font='600 35px Arial,sans-serif';
+  ctx.strokeText(refText,48,2190);ctx.fillText(refText,48,2190);
   if(sizes.length){
+   const sizeText='NUMERAÇÕES  '+sizes.join('  •  ');
    ctx.font='500 31px Arial,sans-serif';
-   ctx.fillText('NUMERAÇÕES  '+sizes.join('  •  '),48,2175);
+   ctx.strokeText(sizeText,48,2247);ctx.fillText(sizeText,48,2247);
   }
   ctx.shadowColor='transparent';ctx.shadowBlur=0;
   const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.97));
@@ -320,18 +325,41 @@
  }
  const BULK_SIZE=10;
  let activeFilter=false,selectedSize='',selectedCategory='',bulkOffset=0,lastSet='',bulkBar=null,bulkButton=null,preparingKey='';
+ let filteredCacheKey='',filteredCache=null;
+ function categoryKey(value){
+  const key=nameKey(value);
+  if(key.startsWith('chinelo'))return 'chinelo';
+  if(key.startsWith('tenis'))return 'tenis';
+  if(key.startsWith('bota'))return 'bota';
+  if(key.startsWith('bolsa'))return 'bolsas';
+  if(key.startsWith('acessorio'))return 'acessorios';
+  return key;
+ }
  function getFilteredResults(){
-  const result=[],seen=new Set();
-  for(const [img,x] of badges){
-   if(!img.isConnected||!x.card?.isConnected||!x.card.getClientRects().length)continue;
-   const r=img.getBoundingClientRect();
-   if(r.width<60||r.height<80)continue;
-   if(selectedSize&&!(Array.isArray(x.p[3])&&x.p[3].map(String).includes(selectedSize)))continue;
-   const key=String(x.p[1]);
-   if(seen.has(key))continue;
-   seen.add(key);
-   result.push(x.p);
+  if(!activeFilter)return [];
+  const category=categoryKey(selectedCategory);
+  const key=category+'|'+selectedSize;
+  // Uma busca tem sequência estável: o scroll não altera a lista, nem
+  // devolve o compartilhamento ao primeiro lote.
+  if(filteredCache&&filteredCacheKey===key)return filteredCache;
+  // Catálogo completo do Wix Stores, incluindo itens ainda não renderizados.
+  // A última coluna indica estoque; a penúltima, as coleções reais do Wix.
+  const all=catalogItems.filter(p=>p[5]===true&&Boolean(p[1]&&p[2])&&
+   (!category||(Array.isArray(p[4])&&p[4].includes(category)))&&
+   (!selectedSize||(Array.isArray(p[3])&&p[3].map(String).includes(selectedSize))));
+  const allowed=new Map(all.map(p=>[String(p[2]),p]));
+  const seen=new Set(),result=[];
+  // Preservar no início a ordem dos produtos que a vitrine já mostrou.
+  for(const [img,entry] of badges){
+   if(!img.isConnected||!entry.card?.isConnected||!entry.card.getClientRects().length)continue;
+   const p=allowed.get(String(entry.p[2]));
+   if(!p||seen.has(p[2]))continue;
+   seen.add(p[2]);result.push(p);
   }
+  // Acrescentar TODOS os produtos restantes, mesmo sem carregar os cards.
+  for(const p of all){if(!seen.has(p[2])){seen.add(p[2]);result.push(p);}}
+  filteredCacheKey=key;
+  filteredCache=result;
   return result;
  }
  function showBulk(){
@@ -470,10 +498,15 @@
   const top=heading?.getBoundingClientRect().top??innerHeight;
   const r=el.getBoundingClientRect();
   if(r.top>top+30||value.length>75)return;
-  if(/^(?:3[4-9]|4[0-5])$/.test(value)){selectedSize=value;activeFilter=true;}
-  else if(/^(?:rasteira|tênis|tenis|sandália|sandalia|papete|salto|chinelo|bota|sapatilha|bolsas|acessórios)$/i.test(value)){
-   selectedCategory=value;activeFilter=true;
+  if(/^(?:3[4-9]|4[0-5])$/.test(value)){
+   selectedSize=selectedSize===value?'':value;
+  }else if(/^(?:rasteira|tênis|tenis|papete|salto|chinelo(?: f\.)?|bota|botas|nuvem|crocs|bolsas|acessórios)$/i.test(value)){
+   selectedCategory=value;
+  }else if(/^(?:escolha uma categoria|todas as categorias)$/i.test(value)){
+   selectedCategory='';
   }else return;
+  activeFilter=Boolean(selectedSize||selectedCategory);
+  filteredCache=null;filteredCacheKey='';
   bulkOffset=0;lastSet='';preparingKey='';
   setTimeout(()=>{scan();scheduleBulk();},700);
  }
